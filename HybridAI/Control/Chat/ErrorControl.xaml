@@ -1,0 +1,44 @@
+﻿<UserControl x:Name="userControl" x:Class="HybridAI.Control.Chat.ErrorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HybridAI.Control.Chat"
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.Effect>
+            <BlurEffect Radius="20"/>
+        </Grid.Effect>
+
+        <Grid.RenderTransform>
+            <ScaleTransform/>
+        </Grid.RenderTransform>
+
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation From="0" To="1" Duration="0:0:0.15" Storyboard.TargetProperty="Opacity"/>
+                        <DoubleAnimation From="20" To="0" Duration="0:0:0.15" 
+                                                             Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)"/>
+                        <DoubleAnimation From="2" To="1" Duration="0:0:0.15" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
+                        <DoubleAnimation From="2" To="1" Duration="0:0:0.15" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:PackIcon Kind="User" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+        <TextBlock Grid.Column="1" Text="{Binding Text, ElementName=userControl}" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                   Margin="10,0,16,0" TextWrapping="WrapWithOverflow" Foreground="Red"/>
+    </Grid>
+</UserControl>
