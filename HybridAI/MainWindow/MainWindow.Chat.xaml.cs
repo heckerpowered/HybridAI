@@ -5,8 +5,6 @@ using System.Windows.Media;
 using HybridAI.AI;
 using HybridAI.Control.Chat;
 
-using MahApps.Metro.Controls;
-
 namespace HybridAI
 {
     public partial class MainWindow
@@ -32,12 +30,12 @@ namespace HybridAI
 
             public DiscontinuousMessageReceiver GetDiscontinuousMessageReceiver()
             {
-                return message => window.Invoke(() => ReceiveMessage(message));
+                return message => window.Dispatcher.Invoke(() => ReceiveMessage(message));
             }
 
             public ExceptionHandler GetExceptionHandler()
             {
-                return exception => window.Invoke(() => ReportException(exception));
+                return exception => window.Dispatcher.Invoke(() => ReportException(exception));
             }
 
             private void ReceiveMessage(string message)

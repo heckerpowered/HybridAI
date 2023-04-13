@@ -51,7 +51,8 @@ namespace HybridAI.Control.Chat
                     Radius = 20
                 },
                 RenderTransform = new ScaleTransform(),
-                Foreground = Foreground
+                Foreground = Foreground,
+                TextWrapping = TextWrapping.WrapWithOverflow
             };
 
             AnimationContainer.Children.Add(textBlock);

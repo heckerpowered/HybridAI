@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace HybridAI.Control.Chat
@@ -17,15 +18,13 @@ namespace HybridAI.Control.Chat
             InitializeComponent();
         }
 
-        public MessageControl(string text) : this()
+        public MessageControl(string text, bool animation = false, Brush? foreground = default) : this()
         {
             Text = text;
-            Task.Run(() => PlayAnimation(text));
-        }
-
-        public MessageControl(string text, bool animation) : this()
-        {
-            Text = text;
+            if (foreground != null)
+            {
+                Foreground = foreground;
+            }
 
             if (animation)
             {

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 using HybridAI.AI;
 using HybridAI.Control.Chat;
@@ -73,33 +74,20 @@ namespace HybridAI
                 return;
             }
 
-            MessageContainer.Items.Add(new ResponseControl(message));
+            MessageContainer.Items.Add(new MessageControl(message, foreground: (Brush)FindResource("ResponseForegroundColor")));
         }
 
-        private void AddError(string message)
-        {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
-
-            MessageContainer.Items.Add(new ErrorControl(message));
-        }
-
-        private ChatHistory GetSelectedChatHistory()
-        {
-            return GetChatHistory(ChatHistoryList.SelectedIndex);
-        }
+        private ChatHistory GetSelectedChatHistory() => GetChatHistory(ChatHistoryList.SelectedIndex);
 
         private ChatHistory GetChatHistory(int index)
         {
             if (index == -1)
             {
-                return AllChatHistory.First();
+                return AllChatHistory.FirstOrDefault() ?? new();
             }
             if (index > AllChatHistory.Count - 1)
             {
-                return AllChatHistory.Last();
+                return AllChatHistory.LastOrDefault() ?? new();
             }
 
             return AllChatHistory[index];
