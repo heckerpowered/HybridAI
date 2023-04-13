@@ -24,14 +24,14 @@ namespace HybridAI
 
         private void SendMessage(object sender, RoutedEventArgs e)
         {
-            _ = SendCurrentTypedMessage();
+            SendCurrentTypedMessage();
         }
 
         private void OnMessageTextBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (e.IsDown && e.Key == Key.Enter)
             {
-                _ = SendCurrentTypedMessage();
+                SendCurrentTypedMessage();
             }
         }
 
@@ -115,7 +115,7 @@ namespace HybridAI
             ChatHistoryList.Items.Add(messageToSent);
 
             ChatHistoryList.SelectedIndex = ChatHistoryList.Items.Count - 1;
-            _ = SendCurrentTypedMessage();
+            SendCurrentTypedMessage();
         }
 
         private void OnRefresh(object sender, RoutedEventArgs e)

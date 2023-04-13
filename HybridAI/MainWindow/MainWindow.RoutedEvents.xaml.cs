@@ -15,7 +15,7 @@ namespace HybridAI
         private CancellationTokenSource LoadingTaskCancellationTokenSource { get; } = new();
         private bool LoadingChatHistory { get; set; }
         private bool Requesting { get; set; } = false;
-        private async Task SendCurrentTypedMessage()
+        private async void SendCurrentTypedMessage()
         {
             var messageToSent = Message.Text.Trim();
             if (Requesting || string.IsNullOrWhiteSpace(messageToSent))
@@ -23,30 +23,37 @@ namespace HybridAI
                 return;
             }
 
-            Requesting = true;
             BeginRequest();
 
-            AddMessage(messageToSent);
-            MessageContainer.Items.Add(new WaitingResponseControl());
+            var context = new ChatContext(this, messageToSent);
+            var request = new MessageRequest(messageToSent, Guid.NewGuid().ToString());
+            var discontinuousMessageReceiver = context.GetDiscontinuousMessageReceiver();
+            var exceptionHandler = context.GetExceptionHandler();
 
-            Message.Text = string.Empty;
-            MessageContainerScrollViewer.SmoothScrollToEnd();
-
-            try
-            {
-                var response = await Server.RequestAI(new(messageToSent));
-                MessageContainer.Items.RemoveAt(MessageContainer.Items.Count - 1);
-                AddResponse(response);
-                GetSelectedChatHistory().ChatContext.Add(new(messageToSent, response));
-            }
-            catch (Exception e)
-            {
-                MessageContainer.Items.RemoveAt(MessageContainer.Items.Count - 1);
-                AddError(e.ToString());
-            }
-
-            Requesting = false;
+            // try/except blocks cannot catch exceptions for asynchronous methods
+            await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler));
             EndRequest();
+        }
+
+        private void EndRequest()
+        {
+            Requesting = false;
+            ChatHistoryList.IsEnabled = true;
+
+            PlayAppearAnimation(SendMessageButton);
+            PlayAppearAnimation(RefreshButton);
+            PlayAppearAnimation(CreateNewChatButton);
+        }
+
+        private void BeginRequest()
+        {
+            Requesting = true;
+            Message.Text = string.Empty;
+            ChatHistoryList.IsEnabled = false;
+
+            PlayDisappearAnimation(SendMessageButton);
+            PlayDisappearAnimation(RefreshButton);
+            PlayDisappearAnimation(CreateNewChatButton);
         }
 
         private void AddMessage(string message)
@@ -56,7 +63,7 @@ namespace HybridAI
                 return;
             }
 
-            MessageContainer.Items.Add(new MessageControl(message));
+            MessageContainer.Items.Add(new MessageControl(message, false));
         }
 
         private void AddResponse(string message)

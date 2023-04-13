@@ -12,6 +12,15 @@
     <WindowChrome.WindowChrome>
         <WindowChrome ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <LinearGradientBrush x:Key="ResponseForegroundColor" EndPoint="1.3,1" StartPoint="-0.2,0">
+            <GradientStop Color="#FF030637" Offset="1"/>
+            <GradientStop Color="#FF0E0F31" Offset="0.166"/>
+            <GradientStop Color="#FF2E2F70" Offset="0.629"/>
+            <GradientStop Color="#FF030637" Offset="0.63"/>
+        </LinearGradientBrush>
+    </Window.Resources>
+    
     <Grid>
         <Grid.Resources>
             <Storyboard x:Key="LoadComplete">
@@ -28,48 +37,6 @@
         </Grid.Resources>
 
         <Grid IsEnabled="False" Name="MainGrid">
-            <Grid.Resources>
-                <Storyboard x:Key="BeginRefresh">
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="0" 
-                                 To="20" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" From="1" 
-                                 To="2" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="1" 
-                                 To="2" Duration="0:0:0.15"/>
-                </Storyboard>
-
-                <Storyboard x:Key="EndRefresh">
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="20" 
-                                 To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" From="2" 
-                                 To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="2" 
-                                 To="1" Duration="0:0:0.15"/>
-                </Storyboard>
-
-                <Storyboard x:Key="BeginRequest">
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="0" 
-                                 To="20" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" From="1" 
-                                 To="2" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="1" 
-                                 To="2" Duration="0:0:0.15"/>
-                </Storyboard>
-
-                <Storyboard x:Key="EndRequest">
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="20" 
-                                 To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" From="2" 
-                                 To="1" Duration="0:0:0.15"/>
-                    <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="2" 
-                                 To="1" Duration="0:0:0.15"/>
-                </Storyboard>
-            </Grid.Resources>
-            
             <Grid.Effect>
                 <BlurEffect Radius="20"/>
             </Grid.Effect>
@@ -94,6 +61,22 @@
                     <BlurEffect Radius="0"/>
                 </Button.Effect>
                 <materialDesign:PackIcon Kind="Send"/>
+            </Button>
+
+            <Button Name="CreateNewChatButton" Grid.Row="1" Grid.Column="0" Margin="8" Width="50" Click="OnCreateNewChat" FocusVisualStyle="{x:Null}"
+                    Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Left">
+                <materialDesign:PackIcon Kind="Add"/>
+                <Button.Effect>
+                    <BlurEffect Radius="0"/>
+                </Button.Effect>
+            </Button>
+
+            <Button Grid.Row="1" Grid.Column="0" Margin="8" Width="50" Click="OnRefresh" FocusVisualStyle="{x:Null}"
+                    Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Right" Name="RefreshButton">
+                <materialDesign:PackIcon Kind="Refresh"/>
+                <Button.Effect>
+                    <BlurEffect Radius="0"/>
+                </Button.Effect>
             </Button>
 
             <control:SmoothScrollViewer Grid.Row="0" Grid.Column="1" Margin="0,32,0,0" x:Name="MessageContainerScrollViewer">
@@ -134,19 +117,6 @@
                     </ItemContainerTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <Button Grid.Row="1" Grid.Column="0" Margin="8" Width="50" Click="OnCreateNewChat" FocusVisualStyle="{x:Null}"
-                    Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Left">
-                <materialDesign:PackIcon Kind="Add"/>
-            </Button>
-
-            <Button Grid.Row="1" Grid.Column="0" Margin="8" Width="50" Click="OnRefresh" FocusVisualStyle="{x:Null}"
-                    Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Right" Name="RefreshButton">
-                <materialDesign:PackIcon Kind="Refresh"/>
-                <Button.Effect>
-                    <BlurEffect Radius="0"/>
-                </Button.Effect>
-            </Button>
         </Grid>
 
         <ProgressBar IsIndeterminate="True" HorizontalAlignment="Center" VerticalAlignment="Stretch" Name="LoadingProgress"

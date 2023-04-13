@@ -8,32 +8,6 @@ namespace HybridAI
 {
     public partial class MainWindow
     {
-        public void BeginRefresh()
-        {
-            (MainGrid.FindResource("BeginRefresh") as Storyboard)?.Begin();
-            RefreshButton.IsEnabled = false;
-
-            CurrentChatHistory = null;
-        }
-
-        public void EndRefresh()
-        {
-            (MainGrid.FindResource("EndRefresh") as Storyboard)?.Begin();
-            RefreshButton.IsEnabled = true;
-        }
-
-        public void BeginRequest()
-        {
-            (MainGrid.FindResource("BeginRequest") as Storyboard)?.Begin();
-            SendMessageButton.IsEnabled = false;
-        }
-
-        public void EndRequest()
-        {
-            (MainGrid.FindResource("EndRequest") as Storyboard)?.Begin();
-            SendMessageButton.IsEnabled = true;
-        }
-
         public void EndInitialize()
         {
             MainGrid.IsEnabled = true;

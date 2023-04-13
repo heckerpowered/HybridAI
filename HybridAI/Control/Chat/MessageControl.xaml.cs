@@ -12,16 +12,19 @@ namespace HybridAI.Control.Chat
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(MessageControl));
 
-        public MessageControl(string text)
+        public MessageControl()
         {
             InitializeComponent();
+        }
+
+        public MessageControl(string text) : this()
+        {
             Text = text;
             Task.Run(() => PlayAnimation(text));
         }
 
-        public MessageControl(string text, bool animation)
+        public MessageControl(string text, bool animation) : this()
         {
-            InitializeComponent();
             Text = text;
 
             if (animation)
@@ -47,6 +50,11 @@ namespace HybridAI.Control.Chat
                 await Dispatcher.BeginInvoke(() => animationTextBox.AddString(character.ToString()));
                 await Task.Delay(10);
             }
+        }
+
+        public void AddString(string text)
+        {
+            animationTextBox.AddString(text);
         }
     }
 }
