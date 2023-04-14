@@ -22,11 +22,21 @@ namespace HybridAI
 
         private List<ChatHistory> AllChatHistory { get; set; } = new();
 
+        /// <summary>
+        /// Called when the send message button is clicked, request AI with current typed message.
+        /// </summary>
+        /// <param name="sender">The button the user clicks</param>
+        /// <param name="e">Routed event args</param>
         private void SendMessage(object sender, RoutedEventArgs e)
         {
             SendCurrentTypedMessage();
         }
 
+        /// <summary>
+        /// Called when the user down a key, if the key is enter, request AI with current typed message.
+        /// </summary>
+        /// <param name="sender">The text box focused on when the user down the key</param>
+        /// <param name="e">Key event args</param>
         private void OnMessageTextBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (e.IsDown && e.Key == Key.Enter)
@@ -35,27 +45,44 @@ namespace HybridAI
             }
         }
 
+        /// <summary>
+        /// Called when the user selected a chat history, interrupt loading if the chat history is loading, put the selected chat history to the UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChatHistorySelected(object sender, SelectionChangedEventArgs e)
         {
             if (LoadingChatHistory)
             {
-                LoadingTaskCancellationTokenSource.Cancel();
+                InterruptLoading();
             }
 
             _ = PutChatHistoryToUI(GetSelectedChatHistory());
         }
 
-        private void OnContentRendered(object sender, System.EventArgs e)
+        /// <summary>
+        /// Called when the content of the window is rendered, start initialize.
+        /// </summary>
+        /// <param name="sender">The window of the content rendered</param>
+        /// <param name="e">Event args</param>
+        private void OnContentRendered(object sender, EventArgs e)
         {
             Task.Factory.StartNew(Initialize);
         }
 
+        /// <summary>
+        /// Initialize the window, load all chat histories, put the first chat history to the UI, put all chat histories' title to the list box.
+        /// </summary>
         private async void Initialize()
         {
             await LoadAllChatHistory();
             await Dispatcher.BeginInvoke(CompleteLoad);
         }
 
+        /// <summary>
+        /// Load all chat history, does not affect the UI.
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadAllChatHistory()
         {
             try
@@ -65,6 +92,9 @@ namespace HybridAI
             catch (Exception) { }
         }
 
+        /// <summary>
+        /// Called when the initial loading is completed, put the first chat history to the UI, put all chat histories' title to the list box.
+        /// </summary>
         private void CompleteLoad()
         {
             if (AllChatHistory.Count == 0)
@@ -80,6 +110,9 @@ namespace HybridAI
             EndInitialize();
         }
 
+        /// <summary>
+        /// Put all chat histories' title to the list box.
+        /// </summary>
         private void PutAllChatHistoryTitleToUI()
         {
             foreach (var history in AllChatHistory)
@@ -89,6 +122,9 @@ namespace HybridAI
             }
         }
 
+        /// <summary>
+        /// Save all the chat history to the disk.
+        /// </summary>
         private void SaveAllChatHistory()
         {
             foreach (var history in AllChatHistory)
@@ -97,11 +133,22 @@ namespace HybridAI
             }
         }
 
+        /// <summary>
+        /// Called when the window is closed, save the chat history.
+        /// </summary>
+        /// <param name="sender">The window closed</param>
+        /// <param name="e">Event args</param>
         private void OnWindowClosed(object sender, EventArgs e)
         {
             SaveAllChatHistory();
         }
 
+        /// <summary>
+        /// Called when the user clicks the create new chat button, request AI with current typed message, 
+        /// and create a new chat history, focus on the text box if no message is typed.
+        /// </summary>
+        /// <param name="sender">The button the user clicks</param>
+        /// <param name="e">Routed event args</param>
         private void OnCreateNewChat(object sender, RoutedEventArgs e)
         {
             var messageToSent = Message.Text.Trim();
@@ -118,6 +165,13 @@ namespace HybridAI
             SendCurrentTypedMessage();
         }
 
+        /// <summary>
+        /// Called when the user clicks the refresh button, refresh the chat history. Chat history will be saved before refresh.
+        /// The refresh button is disabled and hidden while refreshing the chat history, disappear animation will be played before refresh 
+        /// and appear animation will be played after refresh.
+        /// </summary>
+        /// <param name="sender">The button the user clicks</param>
+        /// <param name="e">Routed event args</param>
         private void OnRefresh(object sender, RoutedEventArgs e)
         {
             QueueWorkWithAnimation(RefreshButton, async () =>

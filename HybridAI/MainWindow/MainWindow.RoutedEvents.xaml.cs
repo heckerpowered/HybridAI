@@ -16,6 +16,11 @@ namespace HybridAI
         private CancellationTokenSource LoadingTaskCancellationTokenSource { get; } = new();
         private bool LoadingChatHistory { get; set; }
         private bool Requesting { get; set; } = false;
+
+        /// <summary>
+        /// Request AI with the message typed in the text box, the request will not be processed if the text box is empty
+        /// or there is already a request being processed.
+        /// </summary>
         private async void SendCurrentTypedMessage()
         {
             var messageToSent = Message.Text.Trim();
@@ -36,6 +41,10 @@ namespace HybridAI
             EndRequest();
         }
 
+        /// <summary>
+        /// End request AI, mark not requesting, continue processing requests for AI, refreshing chat history, and switching chat history.
+        /// send button, refresh button, and create new chat button will be enable and shown. Appear animation will be played for these buttons.
+        /// </summary>
         private void EndRequest()
         {
             Requesting = false;
@@ -46,6 +55,10 @@ namespace HybridAI
             PlayAppearAnimation(CreateNewChatButton);
         }
 
+        /// <summary>
+        /// Begin request AI, mark requesting, no more requests for AI, refreshing chat history, or switching chat history will be processed,
+        /// send button, refresh button, and create new chat button will be disable and hidden. Disappear animation will be played for these buttons.
+        /// </summary>
         private void BeginRequest()
         {
             Requesting = true;
@@ -57,6 +70,12 @@ namespace HybridAI
             PlayDisappearAnimation(CreateNewChatButton);
         }
 
+        /// <summary>
+        /// Add a message control to current UI, does not affect any <c>ChatHistory</c>.
+        /// Do not call this method to add message control after requested AI. This method is
+        /// used to add message control when loading <c>ChatHistory</c> to the UI.
+        /// </summary>
+        /// <param name="message">The message the user input</param>
         private void AddMessage(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -67,6 +86,12 @@ namespace HybridAI
             MessageContainer.Items.Add(new MessageControl(message, false));
         }
 
+        /// <summary>
+        /// Add a response control to current UI, does not affect any <c>ChatHistory</c>.
+        /// Do not call this method to add response control after requested AI. This method is
+        /// used to add message control when loading <c>ChatHistory</c> to the UI.
+        /// </summary>
+        /// <param name="message">The response message provided by AI</param>
         private void AddResponse(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -77,8 +102,18 @@ namespace HybridAI
             MessageContainer.Items.Add(new MessageControl(message, foreground: (Brush)FindResource("ResponseForegroundColor")));
         }
 
+        /// <summary>
+        /// Get the <c>ChatHistory</c> at the index selected in the user control(<c>ChatHistoryList</c>),
+        /// returns a new one if no <c>ChatHistory</c> is selected.
+        /// </summary>
+        /// <returns><c>ChatHistory</c> at the specified index or a new one if no <c>ChatHistory</c> is selected.</returns>
         private ChatHistory GetSelectedChatHistory() => GetChatHistory(ChatHistoryList.SelectedIndex);
 
+        /// <summary>
+        /// Get <c>ChatHistory</c> at the specified index, returns a new one if the index is out of range.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns><c>ChatHistory</c> at the specified index or a new one if the index of out of range.</returns>
         private ChatHistory GetChatHistory(int index)
         {
             if (index == -1)
@@ -93,6 +128,11 @@ namespace HybridAI
             return AllChatHistory[index];
         }
 
+        /// <summary>
+        /// Put the specified <c>ChatHistory</c> to the UI, the process id delayed by the animation and can be interrupted.
+        /// </summary>
+        /// <param name="history"><c>ChatHistory</c> to be put into the UI</param>
+        /// <returns>The loading task delayed by animation, exactly the return value of <c>Task.Delay</c></returns>
         private async Task PutChatHistoryToUI(ChatHistory history)
         {
             if (CurrentChatHistory == history)
@@ -132,6 +172,14 @@ namespace HybridAI
                 AddResponse(message);
                 await Task.Delay(1, LoadingTaskCancellationTokenSource.Token);
             }
+        }
+
+        /// <summary>
+        /// Interrupt the process of loading <c>ChatHistory</c> to the UI.
+        /// </summary>
+        private void InterruptLoading()
+        {
+            LoadingTaskCancellationTokenSource.Cancel();
         }
     }
 }
