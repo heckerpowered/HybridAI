@@ -26,7 +26,10 @@ namespace HybridAI
         {
             this.window = window;
             this.input = input;
-            messageControlPosition = window.MessageContainer.Items.Add(new MessageControl(input, false));
+
+            var messageBuilder = new MessageBuilder().SetText(input).SetMessageKind(MessageKind.UserMessage);
+            var messageControl = new MessageControl(messageBuilder);
+            messageControlPosition = window.MessageContainer.Items.Add(messageControl);
             window.MessageContainer.Items.Add(new WaitingResponseControl());
 
             CancellationToken.Register(() =>
