@@ -1,4 +1,6 @@
-﻿namespace HybridAI.AI
+﻿using System.Threading.Tasks;
+
+namespace HybridAI.AI
 {
-    public delegate void DiscontinuousMessageReceiver(string message);
+    public delegate Task DiscontinuousMessageReceiver(string message);
 }

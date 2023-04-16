@@ -5,14 +5,15 @@ namespace HybridAI.History
 {
     internal partial class ChatHistory
     {
-        private static byte[] GetDecryptedData(Stream encryptedStream, byte[] decryptKey)
+        private static byte[] GetDecryptedData(Stream encryptedStream, EncryptionDescriptor encryptionDescriptor)
         {
             using var decryptor = Aes.Create();
-            decryptor.Key = decryptKey;
+            decryptor.Key = encryptionDescriptor.EncryptionKey;
+            decryptor.IV = encryptionDescriptor.InitializationVector;
 
             using var cryptoStream = new CryptoStream(encryptedStream, decryptor.CreateDecryptor(), CryptoStreamMode.Read);
             using var memoryStream = new MemoryStream();
-            encryptedStream.CopyTo(memoryStream);
+            cryptoStream.CopyTo(memoryStream);
 
             return memoryStream.ToArray();
         }

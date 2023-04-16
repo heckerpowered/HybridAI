@@ -32,17 +32,21 @@ namespace HybridAI.Control.Chat
             }
             else
             {
-                animationTextBox.AddString(text);
+                animationTextBox.Text = text;
             }
         }
 
         public string Text
         {
             get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set
+            {
+                SetValue(TextProperty, value);
+                animationTextBox.Text = value;
+            }
         }
 
-        public async void PlayAnimation(string text)
+        public async Task PlayAnimation(string text)
         {
             foreach (char character in text)
             {

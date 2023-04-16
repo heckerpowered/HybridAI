@@ -16,6 +16,14 @@
             <ScaleTransform/>
         </Grid.RenderTransform>
 
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <ContextMenu.Items>
+                    
+                </ContextMenu.Items>
+            </ContextMenu>
+        </Grid.ContextMenu>
+
         <Grid.Triggers>
             <EventTrigger RoutedEvent="Loaded">
                 <BeginStoryboard>

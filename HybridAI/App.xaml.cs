@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
+using HybridAI.AI;
+
 namespace HybridAI
 {
     /// <summary>
@@ -17,6 +19,21 @@ namespace HybridAI
             Current.DispatcherUnhandledException += DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += DomainUnhandledException;
             TaskScheduler.UnobservedTaskException += UnobservedTaskException;
+
+            Directory.CreateDirectory("Logs");
+
+            Trace.AutoFlush = true;
+            Trace.Listeners.Add(
+                new TextWriterTraceListener(
+                    File.CreateText(
+                        Path.ChangeExtension(
+                            Path.Combine("Logs", DateTime.Now.ToString("yyyy M H-m-s")), "txt"))));
+
+            Trace.Listeners.Add(new ConsoleTraceListener());
+
+            Trace.TraceInformation("App launching");
+
+            Server.Client.DefaultRequestHeaders.Connection.Add("keep-alive");
         }
 
         private static void UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
@@ -36,13 +53,11 @@ namespace HybridAI
 
         private static void UnhandledException(object exceptionObject)
         {
-            Directory.CreateDirectory("CrashReports");
-
-            var fileName = Path.ChangeExtension(Path.Combine("CrashReports", DateTime.Now.ToString("yyyy M H-m-s")), "txt");
-            using var streamWriter = File.CreateText(fileName);
-
-            streamWriter.Write(exceptionObject.ToString());
-            streamWriter.Flush();
+            Trace.TraceError("Unhandled exception occured:");
+            Trace.Indent();
+            Trace.WriteLine(exceptionObject.ToString());
+            Trace.Unindent();
+            Trace.TraceInformation("Restarting");
 
             var processFileName = Process.GetCurrentProcess().MainModule?.FileName;
             if (processFileName != null)

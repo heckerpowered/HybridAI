@@ -29,6 +29,11 @@ namespace HybridAI
                 return;
             }
 
+            if (ChatHistoryList.Items.Count == 0)
+            {
+                CreateNewChat(messageToSent);
+            }
+
             BeginRequest();
 
             var context = new ChatContext(this, messageToSent);
@@ -38,7 +43,6 @@ namespace HybridAI
 
             // try/except blocks cannot catch exceptions for asynchronous methods
             await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler));
-            EndRequest();
         }
 
         /// <summary>

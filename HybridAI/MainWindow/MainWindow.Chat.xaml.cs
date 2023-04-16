@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 using HybridAI.AI;
@@ -38,11 +40,12 @@ namespace HybridAI
                 return exception => window.Dispatcher.Invoke(() => ReportException(exception));
             }
 
-            private void ReceiveMessage(string message)
+            private async Task ReceiveMessage(string message)
             {
                 if (string.IsNullOrWhiteSpace(message))
                 {
                     window.GetSelectedChatHistory().ChatContext.Add(new(input, stringBuilder.ToString()));
+                    window.EndRequest();
                     return;
                 }
 
@@ -58,8 +61,13 @@ namespace HybridAI
                     window.MessageContainer.Items.Add(responseControl);
                 }
 
+                responseControl ??= new()
+                {
+                    Foreground = (Brush)window.FindResource("ResponseForegroundColor")
+                };
+
                 messageReceived = true;
-                responseControl?.PlayAnimation(message);
+                await responseControl.PlayAnimation(message);
 
                 window.MessageContainerScrollViewer.SmoothScrollToEnd();
             }
@@ -79,15 +87,42 @@ namespace HybridAI
             {
                 RemoveWaitControl();
 
-                responseControl ??= new();
-                responseControl.Foreground = Brushes.Red;
+                responseControl = new()
+                {
+                    Foreground = Brushes.Red,
+                    Text = exception.ToString()
+                };
 
                 window.MessageContainer.Items.Add(responseControl);
 
-                responseControl?.AddString(Environment.NewLine);
-                responseControl?.AddString(exception.ToString());
+                Trace.TraceError("An error occurred during requesting AI:");
+                Trace.Indent();
+                Trace.WriteLine(exception.ToString());
+                Trace.Unindent();
+
+                Trace.WriteLine("User input:");
+                Trace.Indent();
+                Trace.WriteLine(input);
+                Trace.Unindent();
+
+                var message = stringBuilder.ToString();
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    responseControl.AddString(Environment.NewLine);
+                    Trace.WriteLine("No message received from AI");
+                }
+                else
+                {
+                    Trace.WriteLine("A partial response from the AI was received before the error occurred. The request may have been interrupted due to network reasons.");
+                    Trace.WriteLine("Received message from AI:");
+                    Trace.Indent();
+                    Trace.WriteLine(stringBuilder.ToString());
+                    Trace.Unindent();
+                }
 
                 window.MessageContainerScrollViewer.SmoothScrollToEnd();
+
+                window.EndRequest();
             }
         }
     }

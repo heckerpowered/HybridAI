@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,7 +34,7 @@ namespace HybridAI.Control.Chat
                 StringBuilder.Clear();
                 StringBuilder.Append(value);
                 SetValue(TextProperty, value);
-                NormalTextBox.Text = value;
+                NormalTextBlock.Text = value;
             }
         }
 
@@ -41,6 +42,30 @@ namespace HybridAI.Control.Chat
         {
             StringBuilder.Append(character);
             SetValue(TextProperty, StringBuilder.ToString());
+
+            if (character == "\n")
+            {
+                if (Text[^2] == '\n')
+                {
+                    AnimationContainer.Children.Add(new TextBlock()
+                    {
+                        Width = double.MaxValue,
+                        Text = ""
+                    });
+                }
+                else
+                {
+                    AnimationContainer.Children.Add(new TextBlock()
+                    {
+                        Width = double.MaxValue,
+                        Height = 0
+                    });
+                }
+
+                return;
+            }
+
+            NormalTextBlock.Foreground = Foreground;
 
             var textBlock = new TextBlock()
             {
@@ -59,7 +84,11 @@ namespace HybridAI.Control.Chat
 
             MainWindow.PlayAppearAnimation(textBlock);
 
+            var text = Text;
             await Task.Delay(150);
+
+            textBlock.Visibility = Visibility.Hidden;
+            NormalTextBlock.Text = text;
         }
     }
 }

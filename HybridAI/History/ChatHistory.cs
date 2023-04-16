@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -22,6 +24,8 @@ namespace HybridAI.History
                 return;
             }
 
+            Trace.TraceInformation($"Saving chat history, title: {ChatContext.First().Input}");
+
             CheckDirectory();
             WriteDataAndSign();
         }
@@ -42,22 +46,24 @@ namespace HybridAI.History
                 var signatureFileName = Path.Combine(DirectoryName, Path.ChangeExtension(fileName, "signature"));
                 if (!File.Exists(signatureFileName))
                 {
+                    Trace.TraceError($"Unable to find signature file for {fileName}");
                     continue;
                 }
 
-                var credential = GetCredential();
-                var decryptKey = GeKey(credential);
+                Trace.TraceInformation($"Loading chat history: {fileName}");
 
-                var decryptedData = GetDecryptedData(file.Open(FileMode.Open), decryptKey);
+                var decryptedData = GetDecryptedData(file.Open(FileMode.Open), EncryptionDescriptor);
+                var decryptedDataString = Encoding.Default.GetString(decryptedData);
 
-                // if (!CheckSignature(decryptedData, decryptKey, File.ReadAllBytes(signatureFileName)))
-                // {
-                //     continue;
-                // }
+                if (!CheckSignature(decryptedData, EncryptionDescriptor.EncryptionKey, File.ReadAllBytes(signatureFileName)))
+                {
+                    Trace.TraceError($"Unable to verify file signature, decrypted data: {decryptedDataString}");
+                    continue;
+                }
 
                 yield return new ChatHistory()
                 {
-                    ChatContext = JsonConvert.DeserializeObject<List<Message>>(Encoding.Default.GetString(decryptedData)) ?? new List<Message>()
+                    ChatContext = JsonConvert.DeserializeObject<List<Message>>(decryptedDataString) ?? new List<Message>()
                 };
             }
         }

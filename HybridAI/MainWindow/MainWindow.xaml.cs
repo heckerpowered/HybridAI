@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +18,10 @@ namespace HybridAI
     {
         public MainWindow()
         {
+            Trace.TraceInformation("Initializing component");
+            var time = DateTime.Now;
             InitializeComponent();
+            Trace.TraceInformation($"Component initialized, time cost: {DateTime.Now - time}");
         }
 
         private List<ChatHistory> AllChatHistory { get; set; } = new();
@@ -67,7 +71,8 @@ namespace HybridAI
         /// <param name="e">Event args</param>
         private void OnContentRendered(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(Initialize);
+            Trace.TraceInformation("Window rendered, queueing the initialize work to the thread pool.");
+            Task.Run(Initialize);
         }
 
         /// <summary>
@@ -75,6 +80,7 @@ namespace HybridAI
         /// </summary>
         private async void Initialize()
         {
+            Trace.TraceInformation("Begin initialize from thread pool");
             await LoadAllChatHistory();
             await Dispatcher.BeginInvoke(CompleteLoad);
         }
@@ -85,11 +91,18 @@ namespace HybridAI
         /// <returns></returns>
         private async Task LoadAllChatHistory()
         {
+            Trace.TraceInformation("Loading chat history");
             try
             {
                 AllChatHistory = (await Task.Factory.StartNew(ChatHistory.Load)).ToList();
             }
-            catch (Exception) { }
+            catch (Exception exception)
+            {
+                Trace.TraceError("An error occurred during loading chat history:");
+                Trace.Indent();
+                Trace.WriteLine(exception.ToString());
+                Trace.Unindent();
+            }
         }
 
         /// <summary>
@@ -99,6 +112,7 @@ namespace HybridAI
         {
             if (AllChatHistory.Count == 0)
             {
+                Trace.TraceInformation("No chat history was loaded");
                 AllChatHistory.Add(new ChatHistory());
             }
             else
@@ -108,6 +122,7 @@ namespace HybridAI
             }
 
             EndInitialize();
+            Trace.TraceInformation("Loading completed");
         }
 
         /// <summary>
@@ -140,6 +155,7 @@ namespace HybridAI
         /// <param name="e">Event args</param>
         private void OnWindowClosed(object sender, EventArgs e)
         {
+            Trace.TraceInformation("Window closed");
             SaveAllChatHistory();
         }
 
@@ -158,11 +174,16 @@ namespace HybridAI
                 return;
             }
 
+            CreateNewChat(messageToSent);
+            SendCurrentTypedMessage();
+        }
+
+        private void CreateNewChat(string title)
+        {
             AllChatHistory.Add(new ChatHistory());
-            ChatHistoryList.Items.Add(messageToSent);
+            ChatHistoryList.Items.Add(title);
 
             ChatHistoryList.SelectedIndex = ChatHistoryList.Items.Count - 1;
-            SendCurrentTypedMessage();
         }
 
         /// <summary>
@@ -186,6 +207,11 @@ namespace HybridAI
                 PutAllChatHistoryTitleToUI();
                 await PutChatHistoryToUI(GetChatHistory(index));
             });
+        }
+
+        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Trace.TraceInformation("Stopping");
         }
     }
 }

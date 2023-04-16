@@ -8,7 +8,7 @@
         xmlns:control="clr-namespace:HybridAI.Control"
         mc:Ignorable="d"
         Title="Hybrid Artificial Intelligence" Height="768" Width="1024" WindowStartupLocation="CenterScreen" ContentRendered="OnContentRendered"
-        Closed="OnWindowClosed">
+        Closed="OnWindowClosed" Closing="OnWindowClosing">
     <WindowChrome.WindowChrome>
         <WindowChrome ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>

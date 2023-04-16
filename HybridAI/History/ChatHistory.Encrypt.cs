@@ -20,25 +20,26 @@ namespace HybridAI.History
             using var dataFileStream = File.Create(Path.Combine(DirectoryName, dataFileName));
             using var signatureFileStream = File.Create(Path.Combine(DirectoryName, signatureFileName));
 
-            var encryptKey = GeKey(credential);
-            var dataToEncrypt = Encoding.Default.GetBytes(JsonConvert.SerializeObject(ChatContext));
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ChatContext));
 
-            WriteEncryptedData(dataFileStream, encryptKey, dataToEncrypt);
-            WriteSignature(signatureFileStream, encryptKey, dataToEncrypt);
+            EncryptDataAndWrite(dataFileStream, EncryptionDescriptor, data);
+            WriteSignature(signatureFileStream, EncryptionDescriptor.EncryptionKey, data);
         }
 
-        private static void WriteSignature(Stream signatureFileStream, byte[] encryptKey, byte[] dataToEncrypt)
+        private static void WriteSignature(FileStream signatureFileStream, byte[] encryptKey, byte[] data)
         {
             using var signatory = new HMACSHA512(encryptKey);
-            signatureFileStream.Write(signatory.ComputeHash(dataToEncrypt));
+            signatureFileStream.Write(signatory.ComputeHash(data));
         }
 
-        private static void WriteEncryptedData(Stream dataStream, byte[] encryptKey, byte[] dataToEncrypt)
+        private static void EncryptDataAndWrite(Stream outputStream, EncryptionDescriptor encryptionDescriptor, byte[] data)
         {
             using var encryptor = Aes.Create();
-            encryptor.Key = encryptKey;
-            // using var cryptoStream = new CryptoStream(dataStream, encryptor.CreateEncryptor(), CryptoStreamMode.Write);
-            dataStream.Write(dataToEncrypt);
+            encryptor.Key = encryptionDescriptor.EncryptionKey;
+            encryptor.IV = encryptionDescriptor.InitializationVector;
+
+            using var cryptoStream = new CryptoStream(outputStream, encryptor.CreateEncryptor(), CryptoStreamMode.Write);
+            cryptoStream.Write(data);
         }
     }
 }
