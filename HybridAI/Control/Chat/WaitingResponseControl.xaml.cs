@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace HybridAI.Control.Chat
 {
@@ -20,9 +7,17 @@ namespace HybridAI.Control.Chat
     /// </summary>
     public partial class WaitingResponseControl : UserControl
     {
-        public WaitingResponseControl()
+        public WaitingResponseControl(ChatContext context)
         {
             InitializeComponent();
+            Context = context;
+        }
+
+        public ChatContext Context { get; }
+
+        private void Cancel(object sender, System.Windows.RoutedEventArgs e)
+        {
+            _ = Context.Interrupt();
         }
     }
 }

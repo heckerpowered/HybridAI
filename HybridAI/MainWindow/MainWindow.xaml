@@ -34,6 +34,62 @@
                 <DoubleAnimation Storyboard.TargetName="MainGrid" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)"
                                  From="20" To="0" Duration="0:0:0.15"/>
             </Storyboard>
+
+            <Storyboard x:Key="SendMessage">
+                <!--Move-->
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.5" From="0" To="100" 
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.5" From="-100" To="0" 
+                                 BeginTime="00:00:00.15" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+
+                <!--Disappear-->
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="0" 
+                                 To="20" Duration="0:0:0.15" BeginTime="00:00:00.15"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="Opacity" From="1" BeginTime="00:00:00.15"
+                                 To="0" Duration="0:0:0.15"/>
+
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="20" 
+                                 To="1" Duration="0:0:0.15" BeginTime="00:00:00.15"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="Opacity" From="0" 
+                                 To="1" Duration="0:0:0.15" BeginTime="00:00:00.15"/>
+            </Storyboard>
+
+            <Storyboard x:Key="EndRequest">
+                <!--Move-->
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.5" From="-100" To="0" BeginTime="00:00:00.15"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.5" From="0" To="100" 
+                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+
+                <!--Appear-->
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="20" 
+                                 To="0" Duration="0:0:0.15" BeginTime="00:00:00.15"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="Opacity" From="0" 
+                                 To="1" Duration="0:0:0.15" BeginTime="00:00:00.15"/>
+
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="0" 
+                                 To="20" Duration="0:0:0.15"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="Opacity" From="1" 
+                                 To="0" Duration="0:0:0.15"/>
+            </Storyboard>
         </Grid.Resources>
 
         <Grid IsEnabled="False" Name="MainGrid">
@@ -55,11 +111,26 @@
 
             <TextBox Grid.Row="1" Grid.Column="1" Name="Message" TextWrapping="Wrap" AcceptsReturn="True" KeyDown="OnMessageTextBoxKeyDown"
                  materialDesign:HintAssist.Hint="{DynamicResource ChatTextBoxHint}" materialDesign:HintAssist.IsFloating="True"/>
+
+            <ProgressBar Grid.Row="1" Grid.Column="3" Margin="8" HorizontalAlignment="Left"
+                         Name="RequestingProgress" Opacity="0" Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         IsIndeterminate="True">
+                <ProgressBar.RenderTransform>
+                    <TranslateTransform/>
+                </ProgressBar.RenderTransform>
+                <ProgressBar.Effect>
+                    <BlurEffect Radius="20"/>
+                </ProgressBar.Effect>
+            </ProgressBar>
+
             <Button Grid.Row="1" Grid.Column="3" Margin="8" Width="50" HorizontalAlignment="Left" Click="SendMessage"
                     Style="{StaticResource MaterialDesignFlatButton}" FocusVisualStyle="{x:Null}" Name="SendMessageButton">
                 <Button.Effect>
                     <BlurEffect Radius="0"/>
                 </Button.Effect>
+                <Button.RenderTransform>
+                    <TranslateTransform/>
+                </Button.RenderTransform>
                 <materialDesign:PackIcon Kind="Send"/>
             </Button>
 

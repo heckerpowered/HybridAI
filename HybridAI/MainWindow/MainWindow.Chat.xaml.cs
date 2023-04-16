@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 
 using HybridAI.AI;
 using HybridAI.Control.Chat;
@@ -30,14 +32,7 @@ namespace HybridAI
             var messageBuilder = new MessageBuilder().SetText(input).SetMessageKind(MessageKind.UserMessage);
             var messageControl = new MessageControl(messageBuilder);
             messageControlPosition = window.MessageContainer.Items.Add(messageControl);
-            window.MessageContainer.Items.Add(new WaitingResponseControl());
-
-            CancellationToken.Register(() =>
-            {
-                RemoveWaitControl();
-                window.MessageContainer.Items.RemoveAt(window.MessageContainer.Items.Count - 1);
-                window.EndRequest();
-            });
+            window.MessageContainer.Items.Add(new WaitingResponseControl(this));
         }
 
         public CancellationToken CancellationToken => cancellationTokenSource.Token;
@@ -138,6 +133,28 @@ namespace HybridAI
             }
 
             window.MessageContainerScrollViewer.SmoothScrollToEnd();
+
+            window.EndRequest();
+        }
+
+        public async Task Interrupt()
+        {
+            cancellationTokenSource.Cancel();
+            await RemoveLastControl();
+            await RemoveLastControl();
+
+            async Task RemoveLastControl()
+            {
+                var frameworkElement = (FrameworkElement)window.MessageContainer.Items[^1];
+                frameworkElement.Effect = new BlurEffect();
+                frameworkElement.RenderTransform = new ScaleTransform();
+
+                MainWindow.PerformDisappearAnimation(frameworkElement);
+
+                await Task.Delay(150);
+
+                window.MessageContainer.Items.RemoveAt(window.MessageContainer.Items.Count - 1);
+            }
 
             window.EndRequest();
         }

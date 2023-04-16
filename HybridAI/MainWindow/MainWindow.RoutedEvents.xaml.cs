@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 using HybridAI.AI;
 using HybridAI.Control.Chat;
@@ -55,7 +57,8 @@ namespace HybridAI
             Requesting = false;
             ChatHistoryList.IsEnabled = true;
 
-            PerformAppearAnimation(SendMessageButton);
+            // PerformAppearAnimation(SendMessageButton);
+            ((Content as Grid)?.FindResource("EndRequest") as Storyboard)?.Begin();
             PerformAppearAnimation(RefreshButton);
             PerformAppearAnimation(CreateNewChatButton);
         }
@@ -70,7 +73,8 @@ namespace HybridAI
             Message.Text = string.Empty;
             ChatHistoryList.IsEnabled = false;
 
-            PerformDisappearAnimation(SendMessageButton);
+            // PerformDisappearAnimation(SendMessageButton);
+            ((Content as Grid)?.FindResource("SendMessage") as Storyboard)?.Begin();
             PerformDisappearAnimation(RefreshButton);
             PerformDisappearAnimation(CreateNewChatButton);
         }
