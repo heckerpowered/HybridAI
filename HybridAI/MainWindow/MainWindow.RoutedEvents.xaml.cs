@@ -88,7 +88,9 @@ namespace HybridAI
                 return;
             }
 
-            MessageContainer.Items.Add(new MessageControl(message, false));
+            var messageBuilder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.UserMessage);
+            var messageControl = new MessageControl(messageBuilder);
+            MessageContainer.Items.Add(messageControl);
         }
 
         /// <summary>
@@ -104,7 +106,10 @@ namespace HybridAI
                 return;
             }
 
-            MessageContainer.Items.Add(new MessageControl(message, (Brush)FindResource("ResponseForegroundColor")));
+            var foreground = (Brush)FindResource("ResponseForegroundColor");
+            var builder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.UserMessage).SetForeground(foreground);
+            var messageControl = new MessageControl(builder);
+            MessageContainer.Items.Add(messageControl);
         }
 
         /// <summary>
@@ -121,13 +126,18 @@ namespace HybridAI
         /// <returns><c>ChatHistory</c> at the specified index or a new one if the index of out of range.</returns>
         private ChatHistory GetChatHistory(int index)
         {
-            if (index == -1)
+            if (AllChatHistory.Count == 0)
             {
-                return AllChatHistory.FirstOrDefault() ?? new();
+                AllChatHistory.Add(new());
+            }
+
+            if (index < 0)
+            {
+                return AllChatHistory.First();
             }
             if (index > AllChatHistory.Count - 1)
             {
-                return AllChatHistory.LastOrDefault() ?? new();
+                return AllChatHistory.Last();
             }
 
             return AllChatHistory[index];
