@@ -19,7 +19,7 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <ContextMenu.Items>
-                    
+                    <MenuItem/>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>

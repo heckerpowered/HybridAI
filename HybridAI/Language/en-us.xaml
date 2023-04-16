@@ -2,4 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <system:String x:Key="ChatTextBoxHint">Type to use Siri</system:String>
+    <system:String x:Key="Retry">Retry</system:String>
+    <system:String x:Key="Copy">Copy</system:String>
 </ResourceDictionary>
