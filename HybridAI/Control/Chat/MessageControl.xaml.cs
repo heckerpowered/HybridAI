@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace HybridAI.Control.Chat
@@ -12,27 +11,35 @@ namespace HybridAI.Control.Chat
     public partial class MessageControl : UserControl
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(MessageControl));
+        private readonly MessageKind messageKind;
 
         public MessageControl()
         {
             InitializeComponent();
         }
 
-        public MessageControl(string text, bool animation = false, Brush? foreground = default) : this()
+        public MessageControl(MessageBuilder builder) : this()
         {
+            var text = builder.text;
+            var performAnimation = builder.performAnimation;
+            var foreground = builder.foreground;
+            var messageKind = builder.kind;
+
             Text = text;
+            this.messageKind = messageKind;
             if (foreground != null)
             {
                 Foreground = foreground;
+                animatedTextBlock.Foreground = foreground;
             }
 
-            if (animation)
+            if (performAnimation)
             {
-                Task.Run(() => PlayAnimation(text));
+                Task.Run(() => PerformAnimation(text));
             }
             else
             {
-                animationTextBox.Text = text;
+                animatedTextBlock.Text = text;
             }
         }
 
@@ -42,22 +49,32 @@ namespace HybridAI.Control.Chat
             set
             {
                 SetValue(TextProperty, value);
-                animationTextBox.Text = value;
+                animatedTextBlock.Text = value;
             }
         }
 
-        public async Task PlayAnimation(string text)
+        public async Task PerformAnimation(string text)
         {
             foreach (char character in text)
             {
-                await Dispatcher.BeginInvoke(() => animationTextBox.AddString(character.ToString()));
+                await Dispatcher.BeginInvoke(() => animatedTextBlock.AddString(character.ToString()));
                 await Task.Delay(10);
             }
         }
 
         public void AddString(string text)
         {
-            animationTextBox.AddString(text);
+            animatedTextBlock.AddString(text);
+        }
+
+        private void Retry(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MenuItemLoaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

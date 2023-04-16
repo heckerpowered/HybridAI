@@ -40,38 +40,39 @@ namespace HybridAI
             var request = new MessageRequest(messageToSent, Guid.NewGuid().ToString());
             var discontinuousMessageReceiver = context.GetDiscontinuousMessageReceiver();
             var exceptionHandler = context.GetExceptionHandler();
+            var cancellationToken = context.CancellationToken;
 
             // try/except blocks cannot catch exceptions for asynchronous methods
-            await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler));
+            await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler, cancellationToken));
         }
 
         /// <summary>
         /// End request AI, mark not requesting, continue processing requests for AI, refreshing chat history, and switching chat history.
         /// send button, refresh button, and create new chat button will be enable and shown. Appear animation will be played for these buttons.
         /// </summary>
-        private void EndRequest()
+        internal void EndRequest()
         {
             Requesting = false;
             ChatHistoryList.IsEnabled = true;
 
-            PlayAppearAnimation(SendMessageButton);
-            PlayAppearAnimation(RefreshButton);
-            PlayAppearAnimation(CreateNewChatButton);
+            PerformAppearAnimation(SendMessageButton);
+            PerformAppearAnimation(RefreshButton);
+            PerformAppearAnimation(CreateNewChatButton);
         }
 
         /// <summary>
         /// Begin request AI, mark requesting, no more requests for AI, refreshing chat history, or switching chat history will be processed,
         /// send button, refresh button, and create new chat button will be disable and hidden. Disappear animation will be played for these buttons.
         /// </summary>
-        private void BeginRequest()
+        internal void BeginRequest()
         {
             Requesting = true;
             Message.Text = string.Empty;
             ChatHistoryList.IsEnabled = false;
 
-            PlayDisappearAnimation(SendMessageButton);
-            PlayDisappearAnimation(RefreshButton);
-            PlayDisappearAnimation(CreateNewChatButton);
+            PerformDisappearAnimation(SendMessageButton);
+            PerformDisappearAnimation(RefreshButton);
+            PerformDisappearAnimation(CreateNewChatButton);
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace HybridAI
                 return;
             }
 
-            MessageContainer.Items.Add(new MessageControl(message, foreground: (Brush)FindResource("ResponseForegroundColor")));
+            MessageContainer.Items.Add(new MessageControl(message, (Brush)FindResource("ResponseForegroundColor")));
         }
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace HybridAI
         /// returns a new one if no <c>ChatHistory</c> is selected.
         /// </summary>
         /// <returns><c>ChatHistory</c> at the specified index or a new one if no <c>ChatHistory</c> is selected.</returns>
-        private ChatHistory GetSelectedChatHistory() => GetChatHistory(ChatHistoryList.SelectedIndex);
+        internal ChatHistory GetSelectedChatHistory() => GetChatHistory(ChatHistoryList.SelectedIndex);
 
         /// <summary>
         /// Get <c>ChatHistory</c> at the specified index, returns a new one if the index is out of range.

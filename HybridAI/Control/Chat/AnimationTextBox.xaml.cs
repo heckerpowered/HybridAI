@@ -82,7 +82,7 @@ namespace HybridAI.Control.Chat
 
             AnimationContainer.Children.Add(textBlock);
 
-            MainWindow.PlayAppearAnimation(textBlock);
+            MainWindow.PerformAppearAnimation(textBlock);
 
             var text = Text;
             await Task.Delay(150);

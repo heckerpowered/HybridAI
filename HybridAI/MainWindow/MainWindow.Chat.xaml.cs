@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -9,47 +10,67 @@ using HybridAI.Control.Chat;
 
 namespace HybridAI
 {
-    public partial class MainWindow
+    public class ChatContext
     {
-        public class ChatContext
+        private readonly StringBuilder messageBuilder = new();
+        private readonly int messageControlPosition;
+        private readonly MainWindow window;
+        private readonly string input;
+        private readonly CancellationTokenSource cancellationTokenSource = new();
+
+        private MessageControl? responseControl;
+        private bool waitControlRemoved;
+        private bool messageReceived;
+
+        public ChatContext(MainWindow window, string input)
         {
-            private readonly StringBuilder stringBuilder = new();
-            private readonly int messageControlPosition;
-            private readonly MainWindow window;
-            private readonly string input;
+            this.window = window;
+            this.input = input;
+            messageControlPosition = window.MessageContainer.Items.Add(new MessageControl(input, false));
+            window.MessageContainer.Items.Add(new WaitingResponseControl());
 
-            private MessageControl? responseControl;
-            private bool waitControlRemoved;
-            private bool messageReceived;
-
-            public ChatContext(MainWindow window, string input)
+            CancellationToken.Register(() =>
             {
-                this.window = window;
-                this.input = input;
-                messageControlPosition = window.MessageContainer.Items.Add(new MessageControl(input, false));
-                window.MessageContainer.Items.Add(new WaitingResponseControl());
+                RemoveWaitControl();
+                window.MessageContainer.Items.RemoveAt(window.MessageContainer.Items.Count - 1);
+                window.EndRequest();
+            });
+        }
+
+        public CancellationToken CancellationToken => cancellationTokenSource.Token;
+
+        public DiscontinuousMessageReceiver GetDiscontinuousMessageReceiver()
+        {
+            return message => window.Dispatcher.Invoke(() => ReceiveMessage(message));
+        }
+
+        public ExceptionHandler GetExceptionHandler()
+        {
+            return exception => window.Dispatcher.Invoke(() => ReportException(exception));
+        }
+
+        private async Task ReceiveMessage(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                window.GetSelectedChatHistory().ChatContext.Add(new(input, messageBuilder.ToString()));
+                window.EndRequest();
+                return;
             }
 
-            public DiscontinuousMessageReceiver GetDiscontinuousMessageReceiver()
-            {
-                return message => window.Dispatcher.Invoke(() => ReceiveMessage(message));
-            }
+            messageBuilder.Append(message);
+            CheckIfFirstTimeReceiveMessage();
 
-            public ExceptionHandler GetExceptionHandler()
+            responseControl ??= new()
             {
-                return exception => window.Dispatcher.Invoke(() => ReportException(exception));
-            }
+                Foreground = (Brush)window.FindResource("ResponseForegroundColor")
+            };
 
-            private async Task ReceiveMessage(string message)
+            await responseControl.PerformAnimation(message);
+            window.MessageContainerScrollViewer.SmoothScrollToEnd();
+
+            void CheckIfFirstTimeReceiveMessage()
             {
-                if (string.IsNullOrWhiteSpace(message))
-                {
-                    window.GetSelectedChatHistory().ChatContext.Add(new(input, stringBuilder.ToString()));
-                    window.EndRequest();
-                    return;
-                }
-
-                stringBuilder.Append(message);
                 if (!messageReceived)
                 {
                     responseControl = new()
@@ -61,69 +82,61 @@ namespace HybridAI
                     window.MessageContainer.Items.Add(responseControl);
                 }
 
-                responseControl ??= new()
-                {
-                    Foreground = (Brush)window.FindResource("ResponseForegroundColor")
-                };
-
                 messageReceived = true;
-                await responseControl.PlayAnimation(message);
-
-                window.MessageContainerScrollViewer.SmoothScrollToEnd();
             }
+        }
 
-            public void RemoveWaitControl()
+        public void RemoveWaitControl()
+        {
+            if (waitControlRemoved)
             {
-                if (waitControlRemoved)
-                {
-                    return;
-                }
-                waitControlRemoved = true;
-
-                window.MessageContainer.Items.RemoveAt(messageControlPosition + 1);
+                return;
             }
+            waitControlRemoved = true;
 
-            public void ReportException(Exception exception)
+            window.MessageContainer.Items.RemoveAt(messageControlPosition + 1);
+        }
+
+        public void ReportException(Exception exception)
+        {
+            RemoveWaitControl();
+
+            responseControl = new()
             {
-                RemoveWaitControl();
+                Foreground = Brushes.Red,
+                Text = exception.ToString()
+            };
 
-                responseControl = new()
-                {
-                    Foreground = Brushes.Red,
-                    Text = exception.ToString()
-                };
+            window.MessageContainer.Items.Add(responseControl);
 
-                window.MessageContainer.Items.Add(responseControl);
+            Trace.TraceError("An error occurred during requesting AI:");
+            Trace.Indent();
+            Trace.WriteLine(exception.ToString());
+            Trace.Unindent();
 
-                Trace.TraceError("An error occurred during requesting AI:");
-                Trace.Indent();
-                Trace.WriteLine(exception.ToString());
-                Trace.Unindent();
+            Trace.WriteLine("User input:");
+            Trace.Indent();
+            Trace.WriteLine(input);
+            Trace.Unindent();
 
-                Trace.WriteLine("User input:");
-                Trace.Indent();
-                Trace.WriteLine(input);
-                Trace.Unindent();
-
-                var message = stringBuilder.ToString();
-                if (string.IsNullOrWhiteSpace(message))
-                {
-                    responseControl.AddString(Environment.NewLine);
-                    Trace.WriteLine("No message received from AI");
-                }
-                else
-                {
-                    Trace.WriteLine("A partial response from the AI was received before the error occurred. The request may have been interrupted due to network reasons.");
-                    Trace.WriteLine("Received message from AI:");
-                    Trace.Indent();
-                    Trace.WriteLine(stringBuilder.ToString());
-                    Trace.Unindent();
-                }
-
-                window.MessageContainerScrollViewer.SmoothScrollToEnd();
-
-                window.EndRequest();
+            var message = messageBuilder.ToString();
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                responseControl.AddString(Environment.NewLine);
+                Trace.WriteLine("No message received from AI");
             }
+            else
+            {
+                Trace.WriteLine("A partial response from the AI was received before the error occurred. The request may have been interrupted due to network reasons.");
+                Trace.WriteLine("Received message from AI:");
+                Trace.Indent();
+                Trace.WriteLine(messageBuilder.ToString());
+                Trace.Unindent();
+            }
+
+            window.MessageContainerScrollViewer.SmoothScrollToEnd();
+
+            window.EndRequest();
         }
     }
 }

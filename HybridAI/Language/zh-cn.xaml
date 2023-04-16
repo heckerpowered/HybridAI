@@ -4,4 +4,5 @@
     <system:String x:Key="ChatTextBoxHint">键入以使用Siri</system:String>
     <system:String x:Key="Retry">重试</system:String>
     <system:String x:Key="Copy">复制</system:String>
+    <system:String x:Key="Cancel">取消</system:String>
 </ResourceDictionary>

@@ -19,7 +19,16 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <ContextMenu.Items>
-                    <MenuItem/>
+                    <MenuItem Header="{DynamicResource Retry}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="MenuItemLoaded">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Refresh"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource Cancel}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="MenuItemLoaded">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Refresh"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>
@@ -46,6 +55,6 @@
         </Grid.ColumnDefinitions>
 
         <materialDesign:PackIcon Kind="User" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
-        <local:AnimationTextBox x:Name="animationTextBox" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,16,0"/>
+        <local:AnimationTextBox x:Name="animatedTextBlock" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,16,0"/>
     </Grid>
 </UserControl>

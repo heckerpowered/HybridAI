@@ -14,9 +14,9 @@ namespace HybridAI
             ((Content as Grid)?.FindResource("LoadComplete") as Storyboard)?.Begin();
         }
 
-        public static void PlayDisappearAnimation(FrameworkElement element)
+        public static void PerformDisappearAnimation(FrameworkElement frameworkElement)
         {
-            element.IsEnabled = false;
+            frameworkElement.IsEnabled = false;
 
             if (DisappearStoryboard.Children.Count == 0)
             {
@@ -31,18 +31,18 @@ namespace HybridAI
                 DisappearStoryboard.Children.Add(DisappearScaleYAnimation);
             }
 
-            if (element.RenderTransform is ScaleTransform scaleTransform)
+            if (frameworkElement.RenderTransform is ScaleTransform scaleTransform)
             {
-                scaleTransform.CenterX = element.ActualWidth / 2;
-                scaleTransform.CenterY = element.ActualHeight / 2;
+                scaleTransform.CenterX = frameworkElement.ActualWidth / 2;
+                scaleTransform.CenterY = frameworkElement.ActualHeight / 2;
             }
 
-            DisappearStoryboard.Begin(element);
+            DisappearStoryboard.Begin(frameworkElement);
         }
 
-        public static void PlayAppearAnimation(FrameworkElement element)
+        public static void PerformAppearAnimation(FrameworkElement frameworkElement)
         {
-            element.IsEnabled = true;
+            frameworkElement.IsEnabled = true;
 
             if (AppearStoryboard.Children.Count == 0)
             {
@@ -57,20 +57,20 @@ namespace HybridAI
                 AppearStoryboard.Children.Add(AppearScaleYAnimation);
             }
 
-            if (element.RenderTransform is ScaleTransform scaleTransform)
+            if (frameworkElement.RenderTransform is ScaleTransform scaleTransform)
             {
-                scaleTransform.CenterX = element.ActualWidth / 2;
-                scaleTransform.CenterY = element.ActualHeight / 2;
+                scaleTransform.CenterX = frameworkElement.ActualWidth / 2;
+                scaleTransform.CenterY = frameworkElement.ActualHeight / 2;
             }
 
-            AppearStoryboard.Begin(element);
+            AppearStoryboard.Begin(frameworkElement);
         }
 
-        public static void QueueWorkWithAnimation(FrameworkElement element, Action action)
+        public static void QueueWorkWithAnimation(FrameworkElement frameworkElement, Action action)
         {
-            PlayDisappearAnimation(element);
+            PerformDisappearAnimation(frameworkElement);
             action();
-            PlayAppearAnimation(element);
+            PerformAppearAnimation(frameworkElement);
         }
     }
 }
