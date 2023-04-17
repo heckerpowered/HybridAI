@@ -49,7 +49,17 @@ namespace HybridAI.AI
                         break;
                     }
 
-                    await discontinuousMessageReceiver(new string(buffer, 0, numberOfCharactersRead));
+                    var message = new string(buffer, 0, numberOfCharactersRead);
+                    foreach (var splitMessage in message.Split("\n\n"))
+                    {
+                        var plainText = splitMessage.Replace("data:", string.Empty);
+                        if (string.IsNullOrEmpty(plainText))
+                        {
+                            continue;
+                        }
+
+                        await discontinuousMessageReceiver(plainText);
+                    }
                 }
 
                 await discontinuousMessageReceiver(string.Empty);

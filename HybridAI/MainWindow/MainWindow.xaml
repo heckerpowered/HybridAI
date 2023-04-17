@@ -20,7 +20,7 @@
             <GradientStop Color="#FF030637" Offset="0.63"/>
         </LinearGradientBrush>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.Resources>
             <Storyboard x:Key="LoadComplete">

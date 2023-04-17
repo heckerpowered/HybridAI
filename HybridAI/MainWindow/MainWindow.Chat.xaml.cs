@@ -34,6 +34,7 @@ namespace HybridAI
             var messageControl = new MessageControl(messageBuilder);
             messageControlPosition = window.MessageContainer.Items.Add(messageControl);
             window.MessageContainer.Items.Add(new WaitingResponseControl(this));
+            window.MessageContainerScrollViewer.SmoothScrollToEnd();
         }
 
         public CancellationToken CancellationToken => cancellationTokenSource.Token;
@@ -50,7 +51,7 @@ namespace HybridAI
 
         private async Task ReceiveMessage(string message)
         {
-            if (string.IsNullOrWhiteSpace(message))
+            if (string.IsNullOrEmpty(message))
             {
                 window.GetSelectedChatHistory().ChatContext.Add(new(input, receivedMessageBuilder.ToString()));
                 window.EndRequest();
@@ -65,6 +66,9 @@ namespace HybridAI
                 {
                     Foreground = (Brush)window.FindResource("ResponseForegroundColor")
                 };
+
+                RemoveWaitControl();
+                window.MessageContainer.Items.Add(responseControl);
             }
 
             await responseControl.PerformAnimation(message);
@@ -80,22 +84,6 @@ namespace HybridAI
             messageReceived = true;
 
             return true;
-        }
-
-        private void InitializeResponseControl()
-        {
-            if (responseControl != null)
-            {
-                return;
-            }
-
-            responseControl = new()
-            {
-                Foreground = (Brush)window.FindResource("ResponseForegroundColor")
-            };
-
-            RemoveWaitControl();
-            window.MessageContainer.Items.Add(responseControl);
         }
 
         public void RemoveWaitControl()
