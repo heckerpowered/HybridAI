@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
@@ -14,7 +15,7 @@ namespace HybridAI
 {
     public class ChatContext
     {
-        private readonly StringBuilder messageBuilder = new();
+        private readonly StringBuilder receivedMessageBuilder = new();
         private readonly int messageControlPosition;
         private readonly MainWindow window;
         private readonly string input;
@@ -51,37 +52,50 @@ namespace HybridAI
         {
             if (string.IsNullOrWhiteSpace(message))
             {
-                window.GetSelectedChatHistory().ChatContext.Add(new(input, messageBuilder.ToString()));
+                window.GetSelectedChatHistory().ChatContext.Add(new(input, receivedMessageBuilder.ToString()));
                 window.EndRequest();
                 return;
             }
 
-            messageBuilder.Append(message);
-            CheckIfFirstTimeReceiveMessage();
+            receivedMessageBuilder.Append(message);
 
-            responseControl ??= new()
+            if (CheckIfFirstTimeReceiveMessage() || responseControl == null)
+            {
+                responseControl = new()
+                {
+                    Foreground = (Brush)window.FindResource("ResponseForegroundColor")
+                };
+            }
+
+            await responseControl.PerformAnimation(message);
+            window.MessageContainerScrollViewer.SmoothScrollToEnd();
+        }
+
+        private bool CheckIfFirstTimeReceiveMessage()
+        {
+            if (messageReceived)
+            {
+                return false;
+            }
+            messageReceived = true;
+
+            return true;
+        }
+
+        private void InitializeResponseControl()
+        {
+            if (responseControl != null)
+            {
+                return;
+            }
+
+            responseControl = new()
             {
                 Foreground = (Brush)window.FindResource("ResponseForegroundColor")
             };
 
-            await responseControl.PerformAnimation(message);
-            window.MessageContainerScrollViewer.SmoothScrollToEnd();
-
-            void CheckIfFirstTimeReceiveMessage()
-            {
-                if (!messageReceived)
-                {
-                    responseControl = new()
-                    {
-                        Foreground = (Brush)window.FindResource("ResponseForegroundColor")
-                    };
-
-                    RemoveWaitControl();
-                    window.MessageContainer.Items.Add(responseControl);
-                }
-
-                messageReceived = true;
-            }
+            RemoveWaitControl();
+            window.MessageContainer.Items.Add(responseControl);
         }
 
         public void RemoveWaitControl()
@@ -117,7 +131,7 @@ namespace HybridAI
             Trace.WriteLine(input);
             Trace.Unindent();
 
-            var message = messageBuilder.ToString();
+            var message = receivedMessageBuilder.ToString();
             if (string.IsNullOrWhiteSpace(message))
             {
                 responseControl.AddString(Environment.NewLine);
@@ -128,7 +142,7 @@ namespace HybridAI
                 Trace.WriteLine("A partial response from the AI was received before the error occurred. The request may have been interrupted due to network reasons.");
                 Trace.WriteLine("Received message from AI:");
                 Trace.Indent();
-                Trace.WriteLine(messageBuilder.ToString());
+                Trace.WriteLine(receivedMessageBuilder.ToString());
                 Trace.Unindent();
             }
 
@@ -154,9 +168,32 @@ namespace HybridAI
                 await Task.Delay(150);
 
                 window.MessageContainer.Items.RemoveAt(window.MessageContainer.Items.Count - 1);
+
             }
 
             window.EndRequest();
+        }
+    }
+
+    public class ChatDisplay
+    {
+        public ChatDisplay(MainWindow mainWindow, FrameworkElement currentDisplayElement)
+        {
+            MainWindow = mainWindow;
+            CurrentDisplayElement = currentDisplayElement;
+
+            SetDisplayElement(currentDisplayElement);
+        }
+
+        public MainWindow MainWindow { get; }
+        public FrameworkElement CurrentDisplayElement { get; private set; }
+
+        public ItemCollection ItemCollection => MainWindow.MessageContainer.Items;
+
+        private void SetDisplayElement(FrameworkElement frameworkElement)
+        {
+            ItemCollection.RemoveAt(ItemCollection.Count - 1);
+            ItemCollection.Add(frameworkElement);
         }
     }
 }
