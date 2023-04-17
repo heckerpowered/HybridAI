@@ -9,7 +9,7 @@ namespace HybridAI.History
 {
     internal partial class ChatHistory
     {
-        private void WriteDataAndSign()
+        private void WriteEncryptedDataAndSign()
         {
             var credential = GetCredential();
             using var credentialWithContext = GetCredentialWithContext(credential);
@@ -22,17 +22,17 @@ namespace HybridAI.History
 
             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ChatContext));
 
-            EncryptDataAndWrite(dataFileStream, EncryptionDescriptor, data);
-            WriteSignature(signatureFileStream, EncryptionDescriptor.EncryptionKey, data);
+            EncryptData(dataFileStream, EncryptionDescriptor, data);
+            SignData(signatureFileStream, EncryptionDescriptor.EncryptionKey, data);
         }
 
-        private static void WriteSignature(FileStream signatureFileStream, byte[] encryptKey, byte[] data)
+        private static void SignData(FileStream signatureFileStream, byte[] encryptKey, byte[] data)
         {
             using var signatory = new HMACSHA512(encryptKey);
             signatureFileStream.Write(signatory.ComputeHash(data));
         }
 
-        private static void EncryptDataAndWrite(Stream outputStream, EncryptionDescriptor encryptionDescriptor, byte[] data)
+        private static void EncryptData(Stream outputStream, EncryptionDescriptor encryptionDescriptor, byte[] data)
         {
             using var encryptor = Aes.Create();
             encryptor.Key = encryptionDescriptor.EncryptionKey;

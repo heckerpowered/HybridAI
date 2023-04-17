@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,15 +24,20 @@ namespace HybridAI.AI
                 Content = content
             };
 
+            Trace.TraceInformation($"Begin AI request, id: {request.Id}");
+            var performanceCounter = Stopwatch.StartNew();
+
             try
             {
                 var response = await Client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+                Trace.TraceInformation($"Response headers read, elapsed time: {performanceCounter.Elapsed}");
 
                 // Exceptions raised by asynchronous methods cannot be
                 // caught by previous call via try/catch blocks
                 response.EnsureSuccessStatusCode();
 
-                using var stream = await response.Content.ReadAsStreamAsync();
+                using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
                 using var streamReader = new StreamReader(stream);
 
                 while (true)
@@ -47,15 +53,15 @@ namespace HybridAI.AI
                 }
 
                 await discontinuousMessageReceiver(string.Empty);
+                Trace.TraceInformation($"AI request end, elapsed time: {performanceCounter.Elapsed}");
             }
             catch (TaskCanceledException)
             {
-                ;
+                Trace.TraceInformation($"AI request canceled, elapsed time: {performanceCounter.Elapsed}");
             }
             catch (Exception exception)
             {
                 exceptionHandler(exception);
-                return;
             }
         }
     }

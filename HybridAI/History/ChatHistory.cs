@@ -27,7 +27,7 @@ namespace HybridAI.History
             Trace.TraceInformation($"Saving chat history, title: {ChatContext.First().Input}");
 
             CheckDirectory();
-            WriteDataAndSign();
+            WriteEncryptedDataAndSign();
         }
 
         public static IEnumerable<ChatHistory> Load()

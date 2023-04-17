@@ -90,5 +90,14 @@ namespace HybridAI.History
                 return credential.Take(size).ToArray();
             }
         }
+
+        /// <summary>
+        /// Get encryption algorithm for chat history encryption and decryption
+        /// </summary>
+        /// <returns>Symmetric encryption algorithm</returns>
+        private static SymmetricAlgorithm GetEncryptionAlgorithm()
+        {
+            return Aes.Create();
+        }
     }
 }
