@@ -57,7 +57,7 @@ namespace HybridAI.History
 
                 if (!CheckSignature(decryptedData, EncryptionDescriptor.EncryptionKey, File.ReadAllBytes(signatureFileName)))
                 {
-                    Trace.TraceError($"Unable to verify file signature, decrypted data: {decryptedDataString}");
+                    Trace.TraceError($"Unable to verify file signature");
                     continue;
                 }
 
