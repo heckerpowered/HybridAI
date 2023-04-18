@@ -12,7 +12,7 @@ namespace HybridAI.Control.Chat
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(MessageControl));
         private readonly MessageKind messageKind;
-
+        private readonly Task? animationPerformance;
         public MessageControl()
         {
             InitializeComponent();
@@ -35,7 +35,7 @@ namespace HybridAI.Control.Chat
 
             if (performAnimation)
             {
-                Task.Run(() => PerformAnimation(text));
+                animationPerformance = Task.Run(() => PerformAnimation(text));
             }
             else
             {
@@ -60,6 +60,11 @@ namespace HybridAI.Control.Chat
                 await Dispatcher.BeginInvoke(() => animatedTextBlock.AddString(character.ToString()));
                 await Task.Delay(10);
             }
+        }
+
+        public Task? GetAnimationPerformance()
+        {
+            return animationPerformance;
         }
 
         public void AddString(string text)

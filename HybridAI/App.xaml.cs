@@ -64,7 +64,8 @@ namespace HybridAI
             {
                 Process.Start(processFileName);
             }
-            Environment.Exit(-1);
+
+            Environment.FailFast("Unhandled exception", exceptionObject as Exception);
         }
     }
 }
