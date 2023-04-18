@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 using HybridAI.AI;
+using HybridAI.Options;
 
 namespace HybridAI
 {
@@ -55,14 +56,41 @@ namespace HybridAI
         {
             Trace.TraceError("Unhandled exception occured:");
             Trace.Indent();
-            Trace.WriteLine(exceptionObject.ToString());
+            Trace.WriteLine(exceptionObject);
             Trace.Unindent();
-            Trace.TraceInformation("Restarting");
+
+            var restart = true;
+
+            // To prevent infinite restarts due to unexpected situations,
+            // the application will not be restarted if it crashes too many times in a short time.
+            var elapsedCrashTime = Option.Default.LastCrashTime - DateTime.Now;
+            if (elapsedCrashTime.TotalSeconds <= 60)
+            {
+                Trace.TraceWarning("Detects too many crashes in a short time and will not restart");
+                restart = false;
+            }
+
+            try
+            {
+                Option.Default.LastCrashTime = DateTime.Now;
+                Option.SaveOptions();
+            }
+            catch (Exception exception)
+            {
+                Trace.TraceError("Failed to save options, cannot record crash time");
+                Trace.Indent();
+                Trace.WriteLine(exception);
+            }
 
             var processFileName = Process.GetCurrentProcess().MainModule?.FileName;
-            if (processFileName != null)
+            if (restart && processFileName != null)
             {
+                Trace.TraceInformation("Restarting");
                 Process.Start(processFileName);
+            }
+            else
+            {
+                Trace.TraceWarning("Unable to restart, main module is null");
             }
 
             Environment.FailFast("Unhandled exception", exceptionObject as Exception);
