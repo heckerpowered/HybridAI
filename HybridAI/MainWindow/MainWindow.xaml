@@ -23,7 +23,7 @@
 
     <Grid>
         <Grid.Resources>
-            <Storyboard x:Key="LoadComplete">
+            <Storyboard x:Key="EndInitialize">
                 <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
                 <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="0" 
                                  To="20" Duration="0:0:0.15"/>
@@ -33,6 +33,18 @@
                                  To="2" Duration="0:0:0.15"/>
                 <DoubleAnimation Storyboard.TargetName="MainGrid" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)"
                                  From="20" To="0" Duration="0:0:0.15"/>
+            </Storyboard>
+
+            <Storyboard x:Key="BeginInitialize">
+                <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.15"/>
+                <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" From="20" 
+                                 To="0" Duration="0:0:0.15"/>
+                <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" From="2" 
+                                 To="1" Duration="0:0:0.15"/>
+                <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" From="2" 
+                                 To="1" Duration="0:0:0.15"/>
+                <DoubleAnimation Storyboard.TargetName="MainGrid" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)"
+                                 From="0" To="20" Duration="0:0:0.15"/>
             </Storyboard>
 
             <Storyboard x:Key="SendMessage">

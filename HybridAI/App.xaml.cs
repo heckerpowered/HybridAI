@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-using HybridAI.AI;
 using HybridAI.Options;
 
 namespace HybridAI
@@ -33,8 +32,6 @@ namespace HybridAI
             Trace.Listeners.Add(new ConsoleTraceListener());
 
             Trace.TraceInformation("App launching");
-
-            Server.Client.DefaultRequestHeaders.Connection.Add("keep-alive");
         }
 
         private static void UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

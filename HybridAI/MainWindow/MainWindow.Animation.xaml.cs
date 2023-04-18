@@ -11,7 +11,13 @@ namespace HybridAI
         public void EndInitialize()
         {
             MainGrid.IsEnabled = true;
-            ((Content as Grid)?.FindResource("LoadComplete") as Storyboard)?.Begin();
+            ((Content as Grid)?.FindResource("EndInitialize") as Storyboard)?.Begin();
+        }
+
+        public void BeginInitialize()
+        {
+            MainGrid.IsEnabled = false;
+            ((Content as Grid)?.FindResource("BeginInitialize") as Storyboard)?.Begin();
         }
 
         public static void PerformDisappearAnimation(FrameworkElement frameworkElement)
