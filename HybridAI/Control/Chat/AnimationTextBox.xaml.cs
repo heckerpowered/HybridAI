@@ -38,7 +38,7 @@ namespace HybridAI.Control.Chat
             }
         }
 
-        public async void AddString(string character)
+        public async Task AddString(string character)
         {
             StringBuilder.Append(character);
             SetValue(TextProperty, StringBuilder.ToString());

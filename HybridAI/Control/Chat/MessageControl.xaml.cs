@@ -66,11 +66,9 @@ namespace HybridAI.Control.Chat
 
         public async Task PerformAnimation(string text)
         {
-            await Task.Delay(10);
-
             foreach (char character in text)
             {
-                await Dispatcher.BeginInvoke(() => animatedTextBlock.AddString(character.ToString()));
+                await Dispatcher.BeginInvoke(async () => await animatedTextBlock.AddString(character.ToString()));
                 await Task.Delay(10);
             }
         }
@@ -80,9 +78,9 @@ namespace HybridAI.Control.Chat
             return animationPerformance;
         }
 
-        public void AddString(string text)
+        public async Task AddString(string text)
         {
-            animatedTextBlock.AddString(text);
+            await animatedTextBlock.AddString(text);
         }
 
         private async void Retry(object sender, RoutedEventArgs e)
