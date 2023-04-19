@@ -82,9 +82,6 @@ namespace HybridAI
         {
             Trace.TraceInformation("Begin initialize from thread pool");
             await LoadAllChatHistory();
-
-
-
             await Dispatcher.BeginInvoke(CompleteLoad);
         }
 

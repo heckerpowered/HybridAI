@@ -19,14 +19,19 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <ContextMenu.Items>
-                    <MenuItem Header="{DynamicResource Retry}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="MenuItemLoaded">
+                    <MenuItem Header="{DynamicResource Retry}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="RetryButtonLoaded">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Refresh"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{DynamicResource Cancel}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="MenuItemLoaded">
+                    <MenuItem Header="{DynamicResource Cancel}" Click="Retry" FontFamily="Microsoft YaHei UI" Loaded="CancelButtonLoaded">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Refresh"/>
+                            <materialDesign:PackIcon Kind="Cancel"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource Copy}" Click="Copy" FontFamily="Microsoft YaHei UI">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ContentCopy"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu.Items>

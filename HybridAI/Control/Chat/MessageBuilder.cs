@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Threading;
+using System.Windows.Media;
 
 namespace HybridAI.Control.Chat
 {
@@ -8,6 +9,8 @@ namespace HybridAI.Control.Chat
         internal bool performAnimation = false;
         internal Brush? foreground;
         internal MessageKind kind;
+        internal CancellationTokenSource? cancellationTokenSource;
+        internal MainWindow? container;
 
         /// <summary>
         /// Set the message to be displayed
@@ -52,6 +55,28 @@ namespace HybridAI.Control.Chat
         public MessageBuilder SetMessageKind(MessageKind kind)
         {
             this.kind = kind;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the cancellation token source for the message, which is used to cancel the request to AI.
+        /// </summary>
+        /// <param name="cancellationTokenSource">Cancellation token source</param>
+        /// <returns>Current modified instance</returns>
+        public MessageBuilder SetCancellationTokenSource(CancellationTokenSource cancellationTokenSource)
+        {
+            this.cancellationTokenSource = cancellationTokenSource;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the mainWindow of the message, which is the message in.
+        /// </summary>
+        /// <param name="container">Container item collection</param>
+        /// <returns>Current modified instance</returns>
+        public MessageBuilder SetContainer(MainWindow container)
+        {
+            this.container = container;
             return this;
         }
     }

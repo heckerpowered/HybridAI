@@ -30,7 +30,7 @@ namespace HybridAI
             this.window = window;
             this.input = input;
 
-            var messageBuilder = new MessageBuilder().SetText(input).SetMessageKind(MessageKind.UserMessage);
+            var messageBuilder = new MessageBuilder().SetText(input).SetMessageKind(MessageKind.UserMessage).SetContainer(window);
             var messageControl = new MessageControl(messageBuilder);
             messageControlPosition = window.MessageContainer.Items.Add(messageControl);
             window.MessageContainer.Items.Add(new WaitingResponseControl(this));
@@ -62,7 +62,7 @@ namespace HybridAI
 
             if (CheckIfFirstTimeReceiveMessage() || responseControl == null)
             {
-                responseControl = new()
+                responseControl = new(new MessageBuilder().SetContainer(window).SetCancellationTokenSource(cancellationTokenSource).SetMessageKind(MessageKind.ResponseMessage))
                 {
                     Foreground = (Brush)window.FindResource("ResponseForegroundColor")
                 };
@@ -101,7 +101,7 @@ namespace HybridAI
         {
             RemoveWaitControl();
 
-            responseControl = new()
+            responseControl = new(new MessageBuilder().SetContainer(window).SetMessageKind(MessageKind.ErrorMessage))
             {
                 Foreground = Brushes.Red,
                 Text = exception.ToString()

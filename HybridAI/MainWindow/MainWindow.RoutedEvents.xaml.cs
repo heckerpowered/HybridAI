@@ -17,7 +17,7 @@ namespace HybridAI
         private ChatHistory? CurrentChatHistory { get; set; } = null;
         private CancellationTokenSource LoadingTaskCancellationTokenSource { get; } = new();
         private bool LoadingChatHistory { get; set; }
-        private bool Requesting { get; set; } = false;
+        internal bool Requesting { get; private set; } = false;
 
         /// <summary>
         /// Request AI with the message typed in the text box, the request will not be processed if the text box is empty
@@ -92,7 +92,7 @@ namespace HybridAI
                 return;
             }
 
-            var messageBuilder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.UserMessage);
+            var messageBuilder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.UserMessage).SetContainer(this);
             var messageControl = new MessageControl(messageBuilder);
             MessageContainer.Items.Add(messageControl);
         }
@@ -111,7 +111,7 @@ namespace HybridAI
             }
 
             var foreground = (Brush)FindResource("ResponseForegroundColor");
-            var builder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.UserMessage).SetForeground(foreground);
+            var builder = new MessageBuilder().SetText(message).SetMessageKind(MessageKind.ResponseMessage).SetForeground(foreground).SetContainer(this);
             var messageControl = new MessageControl(builder);
             MessageContainer.Items.Add(messageControl);
         }
