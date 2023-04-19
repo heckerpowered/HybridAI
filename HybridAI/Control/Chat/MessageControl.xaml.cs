@@ -37,7 +37,7 @@ namespace HybridAI.Control.Chat
             Text = text;
             this.messageKind = messageKind;
             this.cancellationTokenSource = cancellationTokenSource;
-            this.mainWindow = container;
+            mainWindow = container;
             if (foreground != null)
             {
                 Foreground = foreground;
@@ -66,6 +66,8 @@ namespace HybridAI.Control.Chat
 
         public async Task PerformAnimation(string text)
         {
+            await Task.Delay(10);
+
             foreach (char character in text)
             {
                 await Dispatcher.BeginInvoke(() => animatedTextBlock.AddString(character.ToString()));
