@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace HybridAI.Control.Chat
 {
@@ -15,7 +16,7 @@ namespace HybridAI.Control.Chat
 
         public ChatContext Context { get; }
 
-        private void Cancel(object sender, System.Windows.RoutedEventArgs e)
+        private void Cancel(object sender, RoutedEventArgs e)
         {
             _ = Context.Interrupt();
         }
