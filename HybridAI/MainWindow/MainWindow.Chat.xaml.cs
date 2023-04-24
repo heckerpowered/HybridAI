@@ -41,12 +41,12 @@ namespace HybridAI
 
         public DiscontinuousMessageReceiver GetDiscontinuousMessageReceiver()
         {
-            return message => window.Dispatcher.Invoke(() => ReceiveMessage(message));
+            return async message => await window.Dispatcher.Invoke(async () => await ReceiveMessage(message));
         }
 
         public ExceptionHandler GetExceptionHandler()
         {
-            return exception => window.Dispatcher.Invoke(() => ReportException(exception));
+            return async exception => await window.Dispatcher.Invoke(async () => await ReportException(exception));
         }
 
         private async Task ReceiveMessage(string message)
@@ -97,7 +97,7 @@ namespace HybridAI
             window.MessageContainer.Items.RemoveAt(messageControlPosition + 1);
         }
 
-        public void ReportException(Exception exception)
+        public async Task ReportException(Exception exception)
         {
             RemoveWaitControl();
 
@@ -122,7 +122,7 @@ namespace HybridAI
             var message = receivedMessageBuilder.ToString();
             if (string.IsNullOrWhiteSpace(message))
             {
-                responseControl.AddString(Environment.NewLine);
+                await responseControl.AddString(Environment.NewLine);
                 Trace.WriteLine("No message received from AI");
             }
             else
@@ -136,10 +136,10 @@ namespace HybridAI
 
             window.MessageContainerScrollViewer.SmoothScrollToEnd();
 
-            window.EndRequest();
+            window.EndRequest(false);
         }
 
-        public async Task Interrupt()
+        public async Task Interrupt(bool exceptionOccurred = false)
         {
             cancellationTokenSource.Cancel();
             await RemoveLastControl();
@@ -159,7 +159,7 @@ namespace HybridAI
 
             }
 
-            window.EndRequest();
+            window.EndRequest(!exceptionOccurred);
         }
     }
 
