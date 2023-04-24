@@ -20,6 +20,20 @@ namespace HybridAI
             ((Content as Grid)?.FindResource("BeginInitialize") as Storyboard)?.Begin();
         }
 
+        public void OpenOptionsPage()
+        {
+            MainGrid.IsEnabled = false;
+            OptionsPage.IsEnabled = true;
+            ((Content as Grid)?.FindResource("OpenOptionsPage") as Storyboard)?.Begin();
+        }
+
+        public void CloseOptionsPage()
+        {
+            MainGrid.IsEnabled = true;
+            OptionsPage.IsEnabled = false;
+            ((Content as Grid)?.FindResource("CloseOptionsPage") as Storyboard)?.Begin();
+        }
+
         public static void PerformDisappearAnimation(FrameworkElement frameworkElement)
         {
             frameworkElement.IsEnabled = false;
