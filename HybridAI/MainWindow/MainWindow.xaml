@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HybridAI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:control="clr-namespace:HybridAI.Control"
+        xmlns:control="clr-namespace:HybridAI.Control" xmlns:pages="clr-namespace:HybridAI.Pages"
         mc:Ignorable="d"
         Title="Hybrid Artificial Intelligence" Height="768" Width="1024" WindowStartupLocation="CenterScreen" ContentRendered="OnContentRendered"
         Closed="OnWindowClosed" Closing="OnWindowClosing">
@@ -21,7 +21,7 @@
         </LinearGradientBrush>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="grid">
         <Grid.Resources>
             <Storyboard x:Key="EndInitialize">
                 <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
@@ -102,12 +102,157 @@
                 <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="Opacity" From="1" 
                                  To="0" Duration="0:0:0.15"/>
             </Storyboard>
+
+            <Storyboard x:Key="Error">
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.05" From="0" To="50"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="-50" BeginTime="00:00:00.05"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="25" BeginTime="00:00:00.15"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="-20" BeginTime="00:00:00.25"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="17.5" BeginTime="00:00:00.35"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="-15" BeginTime="00:00:00.45"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.1" To="12.5" BeginTime="00:00:00.55"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="-12.5" BeginTime="00:00:00.65"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="10" BeginTime="00:00:00.75"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="-10" BeginTime="00:00:00.85"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="5" BeginTime="00:00:00.95"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="-5" BeginTime="00:00:01.05"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Duration="00:00:00.15" To="0" BeginTime="00:00:01.15"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.05" From="0" To="50"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="-50" BeginTime="00:00:00.05"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="25" BeginTime="00:00:00.15"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="-20" BeginTime="00:00:00.25"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="17.5" BeginTime="00:00:00.35"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="-15" BeginTime="00:00:00.45"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.1" To="12.5" BeginTime="00:00:00.55"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="-12.5" BeginTime="00:00:00.65"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="10" BeginTime="00:00:00.75"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="-10" BeginTime="00:00:00.85"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="5" BeginTime="00:00:00.95"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="-5" BeginTime="00:00:01.05"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Duration="00:00:00.15" To="0" BeginTime="00:00:01.15"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"/>
+
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" BeginTime="00:00:00" 
+                                                 From="0" To="20" Duration="0:0:0.5"/>
+                <DoubleAnimation Storyboard.TargetName="RequestingProgress" Storyboard.TargetProperty="Opacity" BeginTime="00:00:00.5" 
+                                                 From="1" To="0" Duration="0:0:0.5"/>
+
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)"
+                                                 From="20" To="0" Duration="0:0:0.5" BeginTime="00:00:00"/>
+                <DoubleAnimation Storyboard.TargetName="SendMessageButton" Storyboard.TargetProperty="Opacity" From="0" 
+                                                 To="1" Duration="0:0:0.5" BeginTime="00:00:00" />
+            </Storyboard>
+
+            <Storyboard x:Key="OpenOptionsPage">
+                <Storyboard Storyboard.TargetName="OptionsPage">
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
+                                     From="-1024" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="(Effect).(BlurEffect.Radius)" From="20" To="0" 
+                                     Duration="0:0:0.3" BeginTime="00:00:00"/>
+                </Storyboard>
+
+                <Storyboard Storyboard.TargetName="MainGrid">
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                     From="1" To="0.8" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                     From="1" To="0.8" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="(Effect).(BlurEffect.Radius)"
+                                     From="0" To="20" Duration="0:0:0.3"/>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3"/>
+                </Storyboard>
+            </Storyboard>
+
+            <Storyboard x:Key="CloseOptionsPage">
+                <Storyboard Storyboard.TargetName="OptionsPage">
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
+                                     From="0" To="-1024" Duration="0:0:0" BeginTime="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="(Effect).(BlurEffect.Radius)" From="0" To="20" 
+                                     Duration="0:0:0.3" BeginTime="00:00:00"/>
+                </Storyboard>
+
+                <Storyboard Storyboard.TargetName="MainGrid">
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                     From="0.8" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                     From="0.8" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation Storyboard.TargetProperty="(Effect).(BlurEffect.Radius)"
+                                     From="20" To="0" Duration="0:0:0.3"/>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                </Storyboard>
+            </Storyboard>
         </Grid.Resources>
+
+        <pages:OptionsPage IsEnabled="False" Opacity="0" x:Name="OptionsPage" Width="{Binding Width, ElementName=grid}"
+                           Height="{Binding Height, ElementName=grid}">
+            <pages:OptionsPage.RenderTransform>
+                <TranslateTransform/>
+            </pages:OptionsPage.RenderTransform>
+            <pages:OptionsPage.Effect>
+                <BlurEffect/>
+            </pages:OptionsPage.Effect>
+        </pages:OptionsPage>
 
         <Grid IsEnabled="False" Name="MainGrid">
             <Grid.Effect>
                 <BlurEffect Radius="20"/>
             </Grid.Effect>
+
+            <Grid.RenderTransform>
+                <ScaleTransform/>
+            </Grid.RenderTransform>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.2*"/>
@@ -160,6 +305,42 @@
                 <Button.Effect>
                     <BlurEffect Radius="0"/>
                 </Button.Effect>
+            </Button>
+
+            <Button Grid.Row="2" Grid.Column="0" Margin="8" Width="50" Height="50" FocusVisualStyle="{x:Null}"
+                    Style="{StaticResource MaterialDesignFlatButton}" HorizontalAlignment="Left" Click="OpenOptionsPage">
+                <materialDesign:PackIcon Kind="Settings">
+                    <materialDesign:PackIcon.RenderTransform>
+                        <RotateTransform CenterX="8" CenterY="8"/>
+                    </materialDesign:PackIcon.RenderTransform>
+                </materialDesign:PackIcon>
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="PreviewMouseDown">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(Content).(RenderTransform).(RotateTransform.Angle)"
+                                                 From="0" To="360" Duration="00:00:01">
+                                    <DoubleAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+
+                    <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                        <BeginStoryboard Name="MouseEnterStoryboard">
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetProperty="(Content).(RenderTransform).(RotateTransform.Angle)"
+                                                 From="0" To="360" Duration="00:00:3"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+
+                    <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                        <StopStoryboard BeginStoryboardName="MouseEnterStoryboard"/>
+                    </EventTrigger>
+                </Button.Triggers>
             </Button>
 
             <control:SmoothScrollViewer Grid.Row="0" Grid.Column="1" Margin="0,32,0,0" x:Name="MessageContainerScrollViewer">

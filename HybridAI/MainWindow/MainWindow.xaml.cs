@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 using HybridAI.History;
 
@@ -82,6 +84,7 @@ namespace HybridAI
         {
             Trace.TraceInformation("Begin initialize from thread pool");
             await LoadAllChatHistory();
+            await Dispatcher.BeginInvoke(() => OptionsPage.GoBack += CloseOptionsPage);
             await Dispatcher.BeginInvoke(CompleteLoad);
         }
 
@@ -198,6 +201,7 @@ namespace HybridAI
             QueueWorkWithAnimation(RefreshButton, async () =>
             {
                 var index = ChatHistoryList.SelectedIndex == -1 ? 0 : ChatHistoryList.SelectedIndex;
+                Trace.TraceInformation("Refreshing");
 
                 SaveAllChatHistory();
                 ChatHistoryList.Items.Clear();
@@ -209,9 +213,23 @@ namespace HybridAI
             });
         }
 
-        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OnWindowClosing(object sender, CancelEventArgs e)
         {
             Trace.TraceInformation("Stopping");
+        }
+
+        private void OpenOptionsPage(object sender, RoutedEventArgs e)
+        {
+            var scaleTransform = (ScaleTransform)MainGrid.RenderTransform;
+            scaleTransform.CenterX = MainGrid.ActualWidth / 2;
+            scaleTransform.CenterY = MainGrid.ActualHeight / 2;
+
+            OpenOptionsPage();
+        }
+
+        private void CloseOptionsPage(object sender, RoutedEventArgs e)
+        {
+            CloseOptionsPage();
         }
     }
 }
