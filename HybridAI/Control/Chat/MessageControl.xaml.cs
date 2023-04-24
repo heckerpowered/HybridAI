@@ -17,13 +17,14 @@ namespace HybridAI.Control.Chat
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(MessageControl));
         private readonly MessageKind messageKind;
-        private readonly Task? animationPerformance;
         private readonly CancellationTokenSource? cancellationTokenSource;
         private readonly MainWindow? mainWindow;
         public MessageControl()
         {
             InitializeComponent();
         }
+
+        private Task? AnimationPerformance { get; set; }
 
         public MessageControl(MessageBuilder builder) : this()
         {
@@ -46,7 +47,7 @@ namespace HybridAI.Control.Chat
 
             if (performAnimation)
             {
-                animationPerformance = Task.Run(() => PerformAnimation(text));
+                AnimationPerformance = Task.Run(async () => await PerformAnimation(text));
             }
             else
             {
@@ -66,16 +67,27 @@ namespace HybridAI.Control.Chat
 
         public async Task PerformAnimation(string text)
         {
-            foreach (char character in text)
+            if (AnimationPerformance != null && !AnimationPerformance.IsCompleted)
             {
-                await Dispatcher.BeginInvoke(async () => await animatedTextBlock.AddString(character.ToString()));
-                await Task.Delay(10);
+                await AnimationPerformance;
+            }
+
+            AnimationPerformance = Core(text);
+            await AnimationPerformance;
+
+            async Task Core(string text)
+            {
+                foreach (char character in text)
+                {
+                    await Dispatcher.BeginInvoke(async () => await animatedTextBlock.AddString(character.ToString()));
+                    await Task.Delay(10);
+                }
             }
         }
 
         public Task? GetAnimationPerformance()
         {
-            return animationPerformance;
+            return AnimationPerformance;
         }
 
         public async Task AddString(string text)
@@ -132,7 +144,7 @@ namespace HybridAI.Control.Chat
             var cancellationToken = context.CancellationToken;
 
             // try/except blocks cannot catch exceptions for asynchronous methods
-            await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler, cancellationToken));
+            await Task.Run(async () => await Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler, cancellationToken));
 
             var chatContext = mainWindow.GetSelectedChatHistory().ChatContext;
             var chatContextIndex = index / 2;
