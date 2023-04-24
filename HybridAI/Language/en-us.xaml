@@ -5,4 +5,5 @@
     <system:String x:Key="Retry">Retry</system:String>
     <system:String x:Key="Copy">Copy</system:String>
     <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Settings">Settings</system:String>
 </ResourceDictionary>
