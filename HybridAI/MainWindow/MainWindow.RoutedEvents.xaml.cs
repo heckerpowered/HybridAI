@@ -45,22 +45,26 @@ namespace HybridAI
             var cancellationToken = context.CancellationToken;
 
             // try/except blocks cannot catch exceptions for asynchronous methods
-            await Task.Run(() => Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler, cancellationToken));
+            await Task.Run(async () => await Server.RequestAIStream(request, discontinuousMessageReceiver, exceptionHandler, cancellationToken));
         }
 
         /// <summary>
         /// End request AI, mark not requesting, continue processing requests for AI, refreshing chat history, and switching chat history.
         /// send button, refresh button, and create new chat button will be enable and shown. Appear animation will be played for these buttons.
+        /// <paramref name="endSuccessfully">This parameter affects the animation of the send message button.
+        /// If the request ends successfully, the button will fly in from the left. Other wise it will appear in the form of jitter.</paramref>
         /// </summary>
-        internal void EndRequest()
+        internal void EndRequest(bool endSuccessfully = true)
         {
             Requesting = false;
             ChatHistoryList.IsEnabled = true;
 
-            // PerformAppearAnimation(SendMessageButton);
-            ((Content as Grid)?.FindResource("EndRequest") as Storyboard)?.Begin();
+            var resourceKey = endSuccessfully ? "EndRequest" : "Error";
+            ((Content as Grid)?.FindResource(resourceKey) as Storyboard)?.Begin();
             PerformAppearAnimation(RefreshButton);
             PerformAppearAnimation(CreateNewChatButton);
+
+
         }
 
         /// <summary>
