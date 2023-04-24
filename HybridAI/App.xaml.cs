@@ -60,10 +60,11 @@ namespace HybridAI
 
             // To prevent infinite restarts due to unexpected situations,
             // the application will not be restarted if it crashes too many times in a short time.
-            var elapsedCrashTime = Option.Default.LastCrashTime - DateTime.Now;
+            var elapsedCrashTime = DateTime.Now - Option.Default.LastCrashTime;
             if (elapsedCrashTime.TotalSeconds <= 60)
             {
                 Trace.TraceWarning("Detects too many crashes in a short time and will not restart");
+                Trace.TraceWarning($"It's been {elapsedCrashTime} since the last crash");
                 restart = false;
             }
 
@@ -85,7 +86,8 @@ namespace HybridAI
                 Trace.TraceInformation("Restarting");
                 Process.Start(processFileName);
             }
-            else
+
+            if (processFileName == null)
             {
                 Trace.TraceWarning("Unable to restart, main module is null");
             }
