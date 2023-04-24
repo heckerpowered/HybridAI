@@ -14,7 +14,7 @@ namespace HybridAI.AI
     {
         internal static HttpClient Client { get; } = new();
 
-        public static async void RequestAIStream(MessageRequest request, DiscontinuousMessageReceiver discontinuousMessageReceiver, ExceptionHandler exceptionHandler, CancellationToken cancellationToken)
+        public static async Task RequestAIStream(MessageRequest request, DiscontinuousMessageReceiver discontinuousMessageReceiver, ExceptionHandler exceptionHandler, CancellationToken cancellationToken)
         {
             var serializedRequest = JsonConvert.SerializeObject(request);
             var content = new StringContent(serializedRequest, new MediaTypeHeaderValue("application/json", "utf-8"));
