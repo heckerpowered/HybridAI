@@ -87,8 +87,8 @@ namespace HybridAI.Control.Chat
             var text = Text;
             await Task.Delay(150);
 
-            textBlock.Visibility = Visibility.Hidden;
             NormalTextBlock.Text = text;
+            textBlock.Visibility = Visibility.Hidden;
         }
     }
 }
