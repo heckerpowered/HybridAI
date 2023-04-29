@@ -321,6 +321,12 @@ public partial class MainWindow : Window
             {
                 EncryptionManager.EncryptionDescriptor = EncryptionDescriptor.GetEncryptionDescriptor(Encoding.Unicode.GetBytes(password));
                 Properties.Settings.ExplicitEncryptChatHistory = true;
+                if (Properties.Settings.SavePassword)
+                {
+                    var passwordVault = new PasswordVault();
+                    passwordVault.Add(new("HybridAI", "HybridAI", password));
+                }
+
                 Properties.SaveProperties();
                 SaveAllChatHistory();
             });
