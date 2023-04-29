@@ -25,4 +25,6 @@
     <system:String x:Key="Update">更新</system:String>
     <system:String x:Key="Updated">更新已下载，重新启动以完成更新</system:String>
     <system:String x:Key="Restart">重新启动</system:String>
+    <system:String x:Key="AutoCheckUpdate">自动检查更新</system:String>
+    <system:String x:Key="AutoCheckupdateDescription">在启动时，自动检查更新</system:String>
 </ResourceDictionary>

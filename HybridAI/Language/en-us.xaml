@@ -25,4 +25,6 @@
     <system:String x:Key="Update">UPDATE</system:String>
     <system:String x:Key="Updated">Update is downloaded, restart to complete the update</system:String>
     <system:String x:Key="Restart">RESTART</system:String>
+    <system:String x:Key="AutoCheckUpdate">AUTOMATICALLY CHECK FOR UPDATE</system:String>
+    <system:String x:Key="AutoCheckupdateDescription">Automatically check for updates at startup</system:String>
 </ResourceDictionary>
