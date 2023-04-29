@@ -19,4 +19,10 @@
     <system:String x:Key="SaveSettings">SAVE SETTINGS</system:String>
     <system:String x:Key="SaveSettingsTooltip">Settings will be saved when the application exits. Click the button to save manually</system:String>
     <system:String x:Key="SettingsSaved">Settings saved</system:String>
+    <system:String x:Key="FailedToUpdate">Failed to check update, an error occured</system:String>
+    <system:String x:Key="UpToDate">Application is up to date</system:String>
+    <system:String x:Key="UpdateAvailable">Update available</system:String>
+    <system:String x:Key="Update">UPDATE</system:String>
+    <system:String x:Key="Updated">Update is downloaded, restart to complete the update</system:String>
+    <system:String x:Key="Restart">RESTART</system:String>
 </ResourceDictionary>

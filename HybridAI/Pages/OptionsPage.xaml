@@ -36,7 +36,7 @@
                 <options:BooleanOption Title="{DynamicResource SavePassword}" Description="{DynamicResource SavePasswordDescription}" Margin="0,16,0,0" x:Name="SavePassword"/>
 
                 <WrapPanel Margin="0,16,0,0">
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource CheckForUpdate}" FocusVisualStyle="{x:Null}" Name="CheckForUpdate"/>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource CheckForUpdate}" FocusVisualStyle="{x:Null}" Name="CheckForUpdate" materialDesign:ButtonProgressAssist.IsIndeterminate="True" materialDesign:ButtonProgressAssist.Minimum="0" materialDesign:ButtonProgressAssist.Maximum="100"/>
                     <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource SaveSettings}" Margin="16,0,0,0" ToolTip="{DynamicResource SaveSettingsTooltip}" FocusVisualStyle="{x:Null}" Name="SaveSettings"/>
                 </WrapPanel>
             </StackPanel>

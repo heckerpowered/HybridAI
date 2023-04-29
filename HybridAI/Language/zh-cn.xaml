@@ -19,4 +19,10 @@
     <system:String x:Key="SaveSettings">保存设置</system:String>
     <system:String x:Key="SaveSettingsTooltip">设置会在应用程序退出时自动保存，点击按钮以手动保存</system:String>
     <system:String x:Key="SettingsSaved">设置已保存</system:String>
+    <system:String x:Key="FailedToUpdate">无法检查更新，发生了错误</system:String>
+    <system:String x:Key="UpToDate">已为最新版本</system:String>
+    <system:String x:Key="UpdateAvailable">更新可用</system:String>
+    <system:String x:Key="Update">更新</system:String>
+    <system:String x:Key="Updated">更新已下载，重新启动以完成更新</system:String>
+    <system:String x:Key="Restart">重新启动</system:String>
 </ResourceDictionary>

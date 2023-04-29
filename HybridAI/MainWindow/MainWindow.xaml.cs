@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -18,6 +19,9 @@ using HybridAI.Language;
 using HybridAI.Options;
 using HybridAI.Pages;
 using HybridAI.Security;
+using HybridAI.Update;
+
+using MaterialDesignThemes.Wpf;
 
 using Windows.Security.Credentials;
 using Windows.Security.Credentials.UI;
@@ -99,9 +103,23 @@ public partial class MainWindow : Window
 
         ChangeLanguage(Properties.Settings.LanguageIndex);
         CheckExplicitEncryption();
+        CleanExpiredFiles();
         await LoadAllChatHistory();
         await Dispatcher.BeginInvoke(InitializePropertiesPage);
         await Dispatcher.BeginInvoke(CompleteLoad);
+    }
+
+    private void CleanExpiredFiles()
+    {
+        var directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+        foreach (var file in directoryInfo.GetFiles())
+        {
+            if (file.Extension == ".expired")
+            {
+                file.Delete();
+                Trace.TraceInformation($"Deleting expired file: {file.Name}");
+            }
+        }
     }
 
     private void CheckExplicitEncryption()
@@ -162,9 +180,87 @@ public partial class MainWindow : Window
         Snackbar.MessageQueue?.Enqueue(Translate("SettingsSaved"));
     }
 
-    private void CheckForUpdate(object sender, RoutedEventArgs e)
+    private async void CheckForUpdate(object sender, RoutedEventArgs e)
     {
-        Snackbar.MessageQueue?.Enqueue("Not implemented");
+        var element = (ButtonBase)sender;
+        ButtonProgressAssist.SetIsIndeterminate(element, true);
+        ButtonProgressAssist.SetIsIndicatorVisible(element, true);
+        element.IsEnabled = false;
+
+        try
+        {
+            Trace.TraceInformation("Checking update");
+            var expiredFiles = await Task.Run(UpdateChecker.CheckUpdate);
+            if (expiredFiles.Count > 0)
+            {
+                Trace.TraceInformation("Update available");
+                Snackbar.MessageQueue?.Enqueue(Translate("UpdateAvailable"), Translate("Update"),
+                    () => Update(expiredFiles));
+            }
+            else
+            {
+                Trace.TraceInformation("The application is up to date");
+                Snackbar.MessageQueue?.Enqueue(Translate("UpToDate"));
+            }
+        }
+        catch (Exception exception)
+        {
+            Trace.TraceError("Error occurred during checking for update");
+            Trace.Indent();
+            Trace.WriteLine(exception.ToString());
+            Trace.Unindent();
+
+            Snackbar.MessageQueue?.Enqueue(Translate("FailedToUpdate"));
+        }
+
+        ButtonProgressAssist.SetIsIndicatorVisible(element, false);
+        element.IsEnabled = true;
+
+        async void Update(List<string> expiredFiles)
+        {
+            element.IsEnabled = false;
+            ButtonProgressAssist.SetIsIndicatorVisible(element, true);
+
+            try
+            {
+                await Task.Run(() => UpdateChecker.Update(expiredFiles, ProgressCallback));
+            }
+            catch (Exception exception)
+            {
+                Trace.TraceError("Error occurred during checking for update");
+                Trace.Indent();
+                Trace.WriteLine(exception.ToString());
+                Trace.Unindent();
+
+                Snackbar.MessageQueue?.Enqueue(Translate("FailedToUpdate"));
+            }
+        }
+
+        void ProgressCallback(double Value)
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                if (ButtonProgressAssist.GetIsIndeterminate(element))
+                {
+                    ButtonProgressAssist.SetIsIndeterminate(element, false);
+                }
+
+                if (Value == 100)
+                {
+                    ButtonProgressAssist.SetIsIndicatorVisible(element, false);
+                    element.IsEnabled = true;
+
+                    Snackbar.MessageQueue?.Enqueue(Translate("Updated"), Translate("Restart"), () =>
+                    {
+                        Close();
+
+                        Trace.TraceInformation("Restarting");
+                        Process.Start("HybridAI.exe");
+                    });
+                }
+                ButtonProgressAssist.SetValue(element, Value);
+            });
+        }
     }
 
     private async void SavePasswordPropertyChanged(bool Value)
