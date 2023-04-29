@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.8.1-ci223" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>

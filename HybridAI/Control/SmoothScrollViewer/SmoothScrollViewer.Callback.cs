@@ -9,7 +9,7 @@ namespace HybridAI.Control
             DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var scrollViewer = dependencyObject as ScrollViewer;
-            scrollViewer?.ScrollToHorizontalOffset((double)(dependencyPropertyChangedEventArgs.NewValue) * scrollViewer.ScrollableWidth);
+            scrollViewer?.ScrollToHorizontalOffset((double)dependencyPropertyChangedEventArgs.NewValue * scrollViewer.ScrollableWidth);
         }
         private static void VerticalScrollRatioChangedCallBack(DependencyObject dependencyObject,
             DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)

@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-using HybridAI.Options;
-
 namespace HybridAI
 {
     /// <summary>
@@ -60,7 +58,7 @@ namespace HybridAI
 
             // To prevent infinite restarts due to unexpected situations,
             // the application will not be restarted if it crashes too many times in a short time.
-            var elapsedCrashTime = DateTime.Now - Option.Default.LastCrashTime;
+            var elapsedCrashTime = DateTime.Now - Options.Properties.Settings.LastCrashTime;
             if (elapsedCrashTime.TotalSeconds <= 60)
             {
                 Trace.TraceWarning("Detects too many crashes in a short time and will not restart");
@@ -70,8 +68,8 @@ namespace HybridAI
 
             try
             {
-                Option.Default.LastCrashTime = DateTime.Now;
-                Option.SaveOptions();
+                Options.Properties.Settings.LastCrashTime = DateTime.Now;
+                Options.Properties.SaveProperties();
             }
             catch (Exception exception)
             {

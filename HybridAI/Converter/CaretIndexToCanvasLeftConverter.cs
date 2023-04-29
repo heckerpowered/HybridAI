@@ -8,11 +8,7 @@ namespace HybridAI.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int caretIndex && parameter is double charWidth)
-            {
-                return caretIndex * charWidth;
-            }
-            return 0;
+            return value is int caretIndex && parameter is double charWidth ? caretIndex * charWidth : (object)0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

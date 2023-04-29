@@ -6,4 +6,17 @@
     <system:String x:Key="Copy">复制</system:String>
     <system:String x:Key="Cancel">取消</system:String>
     <system:String x:Key="Settings">设置</system:String>
+    <system:String x:Key="ExplicitEncryptChatHistoryTitle">显式加密储存聊天记录</system:String>
+    <system:String x:Key="ExplicitEncryptChatHistoryDescription">无论此功能是否启用，你的聊天记录都会被加密储存。如果你选择启用此功能，你需要指定一个密码，用于生成加密密钥。为防止暴力破解，系统将使用较大的迭代次数来延缓每次尝试。如果你选择不启用此功能，则加密密钥会根据你的设备特征生成。在启用此功能之后，你可能需要在每次启动时输入密码以解密聊天记录。</system:String>
+    <system:String x:Key="DisplayLanguage">显示语言</system:String>
+    <system:String x:Key="DisplayLanguageDescription">此语言选项仅影响界面语言，不影响的AI响应。</system:String>
+    <system:String x:Key="EnterPassword">输入密码</system:String>
+    <system:String x:Key="Confirm">确认</system:String>
+    <system:String x:Key="ChangeSettingsVerify">在更改设置之前，你需要验证身份</system:String>
+    <system:String x:Key="SavePassword">保存密码</system:String>
+    <system:String x:Key="SavePasswordDescription">在启用显式加密储存聊天记录后，将你的密码储存在凭据保险箱中，并在每次启动时自动填充密码。如果你的Windows账户不安全，则储存在凭据保险箱中的密码也不安全。</system:String>
+    <system:String x:Key="CheckForUpdate">检查更新</system:String>
+    <system:String x:Key="SaveSettings">保存设置</system:String>
+    <system:String x:Key="SaveSettingsTooltip">设置会在应用程序退出时自动保存，点击按钮以手动保存</system:String>
+    <system:String x:Key="SettingsSaved">设置已保存</system:String>
 </ResourceDictionary>

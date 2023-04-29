@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 using HybridAI.AI;
 using HybridAI.Control.Chat;
 using HybridAI.History;
+using HybridAI.Security;
+using HybridAI.Windows;
 
 namespace HybridAI
 {
@@ -63,8 +68,6 @@ namespace HybridAI
             ((Content as Grid)?.FindResource(resourceKey) as Storyboard)?.Begin();
             PerformAppearAnimation(RefreshButton);
             PerformAppearAnimation(CreateNewChatButton);
-
-
         }
 
         /// <summary>
@@ -139,16 +142,7 @@ namespace HybridAI
                 AllChatHistory.Add(new());
             }
 
-            if (index < 0)
-            {
-                return AllChatHistory.First();
-            }
-            if (index > AllChatHistory.Count - 1)
-            {
-                return AllChatHistory.Last();
-            }
-
-            return AllChatHistory[index];
+            return index < 0 ? AllChatHistory.First() : index > AllChatHistory.Count - 1 ? AllChatHistory.Last() : AllChatHistory[index];
         }
 
         /// <summary>
@@ -203,6 +197,60 @@ namespace HybridAI
         private void InterruptLoading()
         {
             LoadingTaskCancellationTokenSource.Cancel();
+        }
+
+        private static string? RequestPassword()
+        {
+            Trace.TraceInformation("Requesting password");
+            var window = new EnterPassword();
+            window.ShowDialog();
+            return window.Confirmed ? window.Password.Password : string.Empty;
+        }
+
+        private string? ValidatePassword()
+        {
+            Trace.TraceInformation("Validating password");
+            var password = string.Empty;
+
+            while (true)
+            {
+                password = Dispatcher.Invoke(() =>
+                {
+                    var window = new EnterPassword();
+                    window.ShowDialog();
+                    return !window.Confirmed ? null : window.Password.Password;
+                });
+                if (password == null)
+                {
+                    return null;
+                }
+                else if (string.IsNullOrWhiteSpace(password))
+                {
+                    continue;
+                }
+
+                Dispatcher.BeginInvoke(() =>
+                {
+                    PerformDisappearAnimation(OptionsPage);
+                    BeginInitialize();
+                });
+
+                Trace.TraceInformation("Calculating encryption key");
+                var encryptionDescriptor = EncryptionDescriptor.GetEncryptionDescriptor(Encoding.Unicode.GetBytes(password));
+                Dispatcher.BeginInvoke(() =>
+                {
+                    PerformAppearAnimation(OptionsPage);
+                    EndInitialize();
+                });
+
+                if (encryptionDescriptor.Equals(EncryptionManager.EncryptionDescriptor))
+                {
+                    Trace.TraceInformation("Password verified");
+                    return password;
+                }
+
+                Trace.TraceWarning("Failed to verify password, Encryption key not match");
+            }
         }
     }
 }

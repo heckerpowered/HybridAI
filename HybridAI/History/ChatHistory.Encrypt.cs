@@ -3,6 +3,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
+using HybridAI.Security;
+
 using Newtonsoft.Json;
 
 namespace HybridAI.History
@@ -11,24 +13,21 @@ namespace HybridAI.History
     {
         private void WriteEncryptedDataAndSign()
         {
-            var credential = GetCredential();
-            using var credentialWithContext = GetCredentialWithContext(credential);
+            var fileName = GetFileName();
+            var signatureFileName = Path.ChangeExtension(fileName, "signature");
 
-            var dataFileName = BitConverter.ToString(SHA512.HashData(credentialWithContext)).Replace("-", string.Empty);
-            var signatureFileName = Path.ChangeExtension(dataFileName, "signature");
-
-            using var dataFileStream = File.Create(Path.Combine(DirectoryName, dataFileName));
+            using var fileStream = File.Create(Path.Combine(DirectoryName, fileName));
             using var signatureFileStream = File.Create(Path.Combine(DirectoryName, signatureFileName));
 
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ChatContext));
+            var data = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(ChatContext));
 
-            EncryptData(dataFileStream, EncryptionDescriptor, data);
-            SignData(signatureFileStream, EncryptionDescriptor.EncryptionKey, data);
+            EncryptData(fileStream, EncryptionManager.EncryptionDescriptor, data);
+            SignData(signatureFileStream, EncryptionManager.EncryptionDescriptor, data);
         }
 
-        private static void SignData(FileStream signatureFileStream, byte[] encryptKey, byte[] data)
+        private static void SignData(FileStream signatureFileStream, EncryptionDescriptor encryptionDescriptor, byte[] data)
         {
-            using var signatory = new HMACSHA512(encryptKey);
+            using var signatory = new HMACSHA512(encryptionDescriptor.EncryptionKey);
             signatureFileStream.Write(signatory.ComputeHash(data));
         }
 
@@ -40,6 +39,16 @@ namespace HybridAI.History
 
             using var cryptoStream = new CryptoStream(outputStream, encryptor.CreateEncryptor(), CryptoStreamMode.Write);
             cryptoStream.Write(data);
+        }
+        private string GetFileName()
+        {
+            var title = GetTitle();
+            var encodedTitle = Encoding.Unicode.GetBytes(title);
+            using var authentication = new HMACSHA512(encodedTitle);
+            var hash = authentication.ComputeHash(encodedTitle);
+
+            var fileName = BitConverter.ToString(hash).Replace("-", string.Empty);
+            return fileName;
         }
     }
 }

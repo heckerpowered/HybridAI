@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -11,27 +11,34 @@ namespace HybridAI
         public void EndInitialize()
         {
             MainGrid.IsEnabled = true;
-            ((Content as Grid)?.FindResource("EndInitialize") as Storyboard)?.Begin();
+            (GlobalGrid.FindResource("EndInitialize") as Storyboard)?.Begin();
         }
 
         public void BeginInitialize()
         {
             MainGrid.IsEnabled = false;
-            ((Content as Grid)?.FindResource("BeginInitialize") as Storyboard)?.Begin();
+            (GlobalGrid.FindResource("BeginInitialize") as Storyboard)?.Begin();
         }
 
-        public void OpenOptionsPage()
+        public async void OpenOptionsPage()
         {
             MainGrid.IsEnabled = false;
             OptionsPage.IsEnabled = true;
-            ((Content as Grid)?.FindResource("OpenOptionsPage") as Storyboard)?.Begin();
+            (GlobalGrid.FindResource("OpenOptionsPage") as Storyboard)?.Begin();
+
+            await Task.Delay(150);
+            if (!MainGrid.IsEnabled)
+            {
+                MainGrid.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void CloseOptionsPage()
         {
+            MainGrid.Visibility = Visibility.Visible;
             MainGrid.IsEnabled = true;
             OptionsPage.IsEnabled = false;
-            ((Content as Grid)?.FindResource("CloseOptionsPage") as Storyboard)?.Begin();
+            (GlobalGrid.FindResource("CloseOptionsPage") as Storyboard)?.Begin();
         }
 
         public static void PerformDisappearAnimation(FrameworkElement frameworkElement)

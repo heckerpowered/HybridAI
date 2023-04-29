@@ -8,7 +8,7 @@
         xmlns:control="clr-namespace:HybridAI.Control" xmlns:pages="clr-namespace:HybridAI.Pages"
         mc:Ignorable="d"
         Title="Hybrid Artificial Intelligence" Height="768" Width="1024" WindowStartupLocation="CenterScreen" ContentRendered="OnContentRendered"
-        Closed="OnWindowClosed" Closing="OnWindowClosing">
+        Closed="OnWindowClosed" Closing="OnWindowClosing" KeyDown="OnWindowKeyDown">
     <WindowChrome.WindowChrome>
         <WindowChrome ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>
@@ -21,7 +21,7 @@
         </LinearGradientBrush>
     </Window.Resources>
 
-    <Grid x:Name="grid">
+    <Grid Name="GlobalGrid">
         <Grid.Resources>
             <Storyboard x:Key="EndInitialize">
                 <DoubleAnimation Storyboard.TargetName="LoadingProgress" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.15"/>
@@ -171,15 +171,31 @@
 
             <Storyboard x:Key="OpenOptionsPage">
                 <Storyboard Storyboard.TargetName="OptionsPage">
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
                     <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(TranslateTransform.X)"
-                                     From="-1024" To="0" Duration="0:0:0.3">
+                                     From="-1024" To="0" Duration="0:0:0">
                         <DoubleAnimation.EasingFunction>
                             <CircleEase EasingMode="EaseOut"/>
                         </DoubleAnimation.EasingFunction>
                     </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
                     <DoubleAnimation Storyboard.TargetProperty="(Effect).(BlurEffect.Radius)" From="20" To="0" 
                                      Duration="0:0:0.3" BeginTime="00:00:00"/>
+                </Storyboard>
+
+                <Storyboard Storyboard.TargetName="OptionsPageBorder">
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                     From="0.8" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                     From="0.8" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
 
                 <Storyboard Storyboard.TargetName="MainGrid">
@@ -214,6 +230,22 @@
                                      Duration="0:0:0.3" BeginTime="00:00:00"/>
                 </Storyboard>
 
+                <Storyboard Storyboard.TargetName="OptionsPageBorder">
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                     From="1" To="0.8" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                     From="1" To="0.8" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+
                 <Storyboard Storyboard.TargetName="MainGrid">
                     <DoubleAnimation Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
                                      From="0.8" To="1" Duration="0:0:0.3">
@@ -235,15 +267,21 @@
             </Storyboard>
         </Grid.Resources>
 
-        <pages:OptionsPage IsEnabled="False" Opacity="0" x:Name="OptionsPage" Width="{Binding Width, ElementName=grid}"
-                           Height="{Binding Height, ElementName=grid}">
-            <pages:OptionsPage.RenderTransform>
-                <TranslateTransform/>
-            </pages:OptionsPage.RenderTransform>
-            <pages:OptionsPage.Effect>
-                <BlurEffect/>
-            </pages:OptionsPage.Effect>
-        </pages:OptionsPage>
+        <Border Name="OptionsPageBorder">
+            <Border.RenderTransform>
+                <ScaleTransform/>
+            </Border.RenderTransform>
+
+            <pages:OptionsPage IsEnabled="False" Opacity="0" x:Name="OptionsPage" Width="{Binding Width, ElementName=GlobalGrid}"
+                           Height="{Binding Height, ElementName=GlobalGrid}">
+                <pages:OptionsPage.RenderTransform>
+                    <TranslateTransform/>
+                </pages:OptionsPage.RenderTransform>
+                <pages:OptionsPage.Effect>
+                    <BlurEffect/>
+                </pages:OptionsPage.Effect>
+            </pages:OptionsPage>
+        </Border>
 
         <Grid IsEnabled="False" Name="MainGrid">
             <Grid.Effect>
@@ -344,10 +382,10 @@
             </Button>
 
             <control:SmoothScrollViewer Grid.Row="0" Grid.Column="1" Margin="0,32,0,0" x:Name="MessageContainerScrollViewer">
-                <ListBox x:Name="MessageContainer"/>
+                <ListBox x:Name="MessageContainer" FocusVisualStyle="{x:Null}"/>
             </control:SmoothScrollViewer>
 
-            <ListBox Name="ChatHistoryList" SelectionChanged="ChatHistorySelected" Margin="0,32,0,0">
+            <ListBox Name="ChatHistoryList" SelectionChanged="ChatHistorySelected" Margin="0,32,0,0" FocusVisualStyle="{x:Null}">
                 <ListBox.ItemTemplate>
                     <ItemContainerTemplate>
                         <Grid>
@@ -392,5 +430,7 @@
                 <ScaleTransform CenterX="25" CenterY="25"/>
             </ProgressBar.RenderTransform>
         </ProgressBar>
+
+        <materialDesign:Snackbar MessageQueue="{materialDesign:MessageQueue}" x:Name="Snackbar"/>
     </Grid>
 </Window>

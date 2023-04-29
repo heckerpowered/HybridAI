@@ -148,14 +148,13 @@ namespace HybridAI.Control.Chat
 
             var chatContext = mainWindow.GetSelectedChatHistory().ChatContext;
             var chatContextIndex = index / 2;
-            if (chatContextIndex < 0)
-            {
-                chatContextIndex = 0;
-            }
-
             if (chatContextIndex >= chatContext.Count)
             {
                 chatContextIndex = chatContext.Count - 1;
+            }
+            if (chatContextIndex < 0)
+            {
+                chatContextIndex = 0;
             }
 
             chatContext.RemoveAt(chatContextIndex);

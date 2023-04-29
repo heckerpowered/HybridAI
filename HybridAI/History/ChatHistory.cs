@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using HybridAI.Security;
+
 using Newtonsoft.Json;
 
 namespace HybridAI.History
@@ -11,27 +13,9 @@ namespace HybridAI.History
     internal partial class ChatHistory
     {
         private static readonly string DirectoryName = "ChatHistory";
-        public ChatHistory()
-        {
-        }
-
-        public List<Message> ChatContext { get; private set; } = new();
-
-        public void Save()
-        {
-            if (ChatContext.Count == 0)
-            {
-                return;
-            }
-
-            Trace.TraceInformation($"Saving chat history, title: {ChatContext.First().Input}");
-
-            CheckDirectory();
-            WriteEncryptedDataAndSign();
-        }
-
         public static IEnumerable<ChatHistory> Load()
         {
+            Trace.TraceInformation("Loading chat history");
             CheckDirectory();
 
             var directoryInfo = new DirectoryInfo(DirectoryName);
@@ -52,10 +36,10 @@ namespace HybridAI.History
 
                 Trace.TraceInformation($"Loading chat history: {fileName}");
 
-                var decryptedData = GetDecryptedData(file.Open(FileMode.Open), EncryptionDescriptor);
-                var decryptedDataString = Encoding.Default.GetString(decryptedData);
+                var decryptedData = GetDecryptedData(file.Open(FileMode.Open), EncryptionManager.EncryptionDescriptor);
+                var decryptedDataString = Encoding.Unicode.GetString(decryptedData);
 
-                if (!CheckSignature(decryptedData, EncryptionDescriptor.EncryptionKey, File.ReadAllBytes(signatureFileName)))
+                if (!CheckSignature(decryptedData, EncryptionManager.EncryptionDescriptor, File.ReadAllBytes(signatureFileName)))
                 {
                     Trace.TraceError($"Unable to verify file signature");
                     continue;
@@ -71,6 +55,31 @@ namespace HybridAI.History
         private static void CheckDirectory()
         {
             Directory.CreateDirectory(DirectoryName);
+        }
+
+        public ChatHistory()
+        {
+        }
+
+        public List<Message> ChatContext { get; private set; } = new();
+
+        public void Save()
+        {
+            if (ChatContext.Count == 0)
+            {
+                Trace.TraceInformation("No chat history to save");
+                return;
+            }
+
+            Trace.TraceInformation($"Saving chat history, title: {GetTitle()}");
+
+            CheckDirectory();
+            WriteEncryptedDataAndSign();
+        }
+
+        private string GetTitle()
+        {
+            return ChatContext.First().Input;
         }
     }
 }

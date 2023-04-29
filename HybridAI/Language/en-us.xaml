@@ -1,9 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
-    <system:String x:Key="ChatTextBoxHint">Type to use Siri</system:String>
-    <system:String x:Key="Retry">Retry</system:String>
-    <system:String x:Key="Copy">Copy</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
-    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="ChatTextBoxHint">Type to use siri</system:String>
+    <system:String x:Key="Retry">RETRY</system:String>
+    <system:String x:Key="Copy">COPY</system:String>
+    <system:String x:Key="Cancel">CANCEL</system:String>
+    <system:String x:Key="Settings">SETTINGS</system:String>
+    <system:String x:Key="DisplayLanguage">DISPLAY LANGUAGE</system:String>
+    <system:String x:Key="ExplicitEncryptChatHistoryTitle">EXPLICIT ENCRYPT CHAT HISTORY</system:String>
+    <system:String x:Key="ExplicitEncryptChatHistoryDescription">Whether this feature is enabled or not, your chat history will be encrypted and stored. If you choose to enable this feature, you need to specify a password to generate a encryption key. In order to prevent brute force, the system will use a large number of iterations to delay each attempt. If you choose not to enable this feature, the encryption key will be generated accroding to your device characteristics. You may enter a password at each startup to decrypt the chat history</system:String>
+    <system:String x:Key="DisplayLanguageDescription">This language option only affects the UI language, not the response of AI</system:String>
+    <system:String x:Key="EnterPassword">Enter password</system:String>
+    <system:String x:Key="Confirm">CONFIRM</system:String>
+    <system:String x:Key="ChangeSettingsVerify">You need to verify your identity before changing settings</system:String>
+    <system:String x:Key="SavePassword">SAVE THE PASSWORD</system:String>
+    <system:String x:Key="SavePasswordDescription">After enabling explicit encrypt chat history, store your password in the credential locker and fill the password at each staartup. The password stored in the credential locker is not secure if your Windows account is not secure</system:String>
+    <system:String x:Key="CheckForUpdate">CHECK FOR UPDATE</system:String>
+    <system:String x:Key="SaveSettings">SAVE SETTINGS</system:String>
+    <system:String x:Key="SaveSettingsTooltip">Settings will be saved when the application exits. Click the button to save manually</system:String>
+    <system:String x:Key="SettingsSaved">Settings saved</system:String>
 </ResourceDictionary>

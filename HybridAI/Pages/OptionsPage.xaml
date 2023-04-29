@@ -5,11 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HybridAI.Pages"
       mc:Ignorable="d" 
-      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      d:DesignHeight="768" d:DesignWidth="1024"
-      Height="768" Width="1024"
-        Background="White">
-    <Grid>
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:options="clr-namespace:HybridAI.Control.Options" 
+             d:DesignHeight="768" d:DesignWidth="1024" Height="768" Width="1024">
+    <Grid UseLayoutRounding="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.07*"/>
             <RowDefinition/>
@@ -31,33 +29,16 @@
                    FontFamily="Microsoft Yahei UI"/>
         </WrapPanel>
 
-        <ScrollViewer Grid.Row="1" Margin="8">
+        <ScrollViewer Grid.Row="1" Margin="16">
             <StackPanel>
-                <Border>
-                    <StackPanel>
-                        <Border CornerRadius="10" Background="WhiteSmoke">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
+                <options:ComboOption Title="{DynamicResource DisplayLanguage}" Description="{DynamicResource DisplayLanguageDescription}" x:Name="ComboOption"/>
+                <options:BooleanOption Title="{DynamicResource ExplicitEncryptChatHistoryTitle}" Description="{DynamicResource ExplicitEncryptChatHistoryDescription}" Margin="0,16,0,0" x:Name="ExplicitEncryption" BooleanPropertyChanged="ExplicitEncryptionChanged"/>
+                <options:BooleanOption Title="{DynamicResource SavePassword}" Description="{DynamicResource SavePasswordDescription}" Margin="0,16,0,0" x:Name="SavePassword"/>
 
-                                <TextBlock Text="显式加密储存聊天记录" HorizontalAlignment="Left" FontSize="20"
-                                           Margin="16,8,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-
-                                <Grid Grid.Row="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="0.035*"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock TextWrapping="WrapWithOverflow" Grid.Column="1" Margin="16" Grid.Row="1" Text="无论是否启用，你的聊天记录都会被加密储存在本地磁盘上。若启用，你可以指定一个密码，否则用于加密的密钥将根据设备特征生成。如果你的设备支持Windows Hello, 则您可以使用Windows Hello代替密码，在这种情况下，加密密钥将使用加密随机数生成器生成。你可以将加密后的聊天记录上传到服务器上，可缓解对密码的暴力攻击，在输入无效密码后的延迟时间将逐步增加。连续尝试同一错误密码不计入次数限制内。延迟由服务器执行。尝试错误密码的次数超过限制后，服务器将不再处理任何解密聊天记录的请求，储存在服务器上的加密过的聊天记录将被移除。为缓解暴力攻击，系统将使用较大的迭代次数来延缓每次尝试。"/>
-                                    <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-                </Border>
+                <WrapPanel Margin="0,16,0,0">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource CheckForUpdate}" FocusVisualStyle="{x:Null}" Name="CheckForUpdate"/>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource SaveSettings}" Margin="16,0,0,0" ToolTip="{DynamicResource SaveSettingsTooltip}" FocusVisualStyle="{x:Null}" Name="SaveSettings"/>
+                </WrapPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
