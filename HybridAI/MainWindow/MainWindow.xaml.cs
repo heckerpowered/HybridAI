@@ -389,7 +389,7 @@ public partial class MainWindow : Window
     {
         if (await UserConsentVerifier.CheckAvailabilityAsync() == UserConsentVerifierAvailability.Available
                 && await UserConsentVerifier.RequestVerificationAsync(Translate("ChangeSettingsVerify")) != UserConsentVerificationResult.Verified
-                && string.IsNullOrWhiteSpace(await Task.Run(ValidatePassword)))
+                || string.IsNullOrWhiteSpace(await Task.Run(ValidatePassword)))
         {
             Trace.TraceError("Identity verification not passed");
             return false;
