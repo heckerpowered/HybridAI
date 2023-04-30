@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace HybridAI.Security
 {
@@ -19,18 +17,6 @@ namespace HybridAI.Security
             var initializationVector = EncryptionManager.GetInitializationVector(credential);
 
             return new(encryptionKey, initializationVector);
-        }
-
-        public CryptoStream GetCryptoStream(Stream stream, CryptoStreamMode cryptoStreamMode)
-        {
-            using var encryptionAlgorithm = EncryptionManager.GetEncryptionAlgorithm();
-            encryptionAlgorithm.Key = EncryptionKey;
-            encryptionAlgorithm.IV = InitializationVector;
-
-            var transform = cryptoStreamMode == CryptoStreamMode.Read ? encryptionAlgorithm.CreateDecryptor() : encryptionAlgorithm.CreateEncryptor();
-            using var cryptoStream = new CryptoStream(stream, transform, cryptoStreamMode);
-
-            return cryptoStream;
         }
 
         public virtual bool Equals(EncryptionDescriptor? encryptionDescriptor)

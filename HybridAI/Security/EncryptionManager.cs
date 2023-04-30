@@ -14,10 +14,14 @@ namespace HybridAI.Security
             using var authentication = new HMACSHA512(credential);
             var salt = authentication.ComputeHash(credential);
 
+            // Anti side-channel timing attacks
+            // Anti GPU crack attack
+            // Anti tradeoff attack
+            // Extremely high iterations
             var argon = new Argon2id(credential)
             {
                 Salt = salt,
-                Iterations = 128,
+                Iterations = 1024,
                 DegreeOfParallelism = Environment.ProcessorCount,
                 MemorySize = 8192
             };

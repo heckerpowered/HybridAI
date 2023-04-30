@@ -100,16 +100,27 @@ public partial class MainWindow : Window
     private async void Initialize()
     {
         Trace.TraceInformation("Begin initialize from thread pool");
-
         ChangeLanguage(Properties.Settings.LanguageIndex);
         CheckExplicitEncryption();
         CleanExpiredFiles();
         await LoadAllChatHistory();
         await Dispatcher.BeginInvoke(InitializePropertiesPage);
         await Dispatcher.BeginInvoke(CompleteLoad);
+        await Dispatcher.BeginInvoke(AutoCheckUpdate);
     }
 
-    private void CleanExpiredFiles()
+    private async Task AutoCheckUpdate()
+    {
+        if (!Properties.Settings.AutoCheckUpdate)
+        {
+            return;
+        }
+
+        await Task.Delay(150);
+        CheckForUpdate(OptionsPage.CheckForUpdate, new RoutedEventArgs());
+    }
+
+    private static void CleanExpiredFiles()
     {
         var directoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
         foreach (var file in directoryInfo.GetFiles())
@@ -167,11 +178,18 @@ public partial class MainWindow : Window
         OptionsPage.LanguageChanged += LanguageChanged;
         OptionsPage.ExplicitEncryptionPropertyChanged += ExplicitEncryptionPropertyChanged;
         OptionsPage.SavePassword.BooleanPropertyChanged += SavePasswordPropertyChanged;
+        OptionsPage.AutoCheckUpdate.BooleanPropertyChanged += AutoCheckUpdatePropertyChanged;
         OptionsPage.CheckForUpdate.Click += CheckForUpdate;
         OptionsPage.SaveSettings.Click += SaveSettings;
 
         OptionsPage.ExplicitEncryption.CheckBox.IsChecked = Properties.Settings.ExplicitEncryptChatHistory;
         OptionsPage.SavePassword.CheckBox.IsChecked = Properties.Settings.SavePassword;
+        OptionsPage.AutoCheckUpdate.CheckBox.IsChecked = Properties.Settings.AutoCheckUpdate;
+    }
+
+    private void AutoCheckUpdatePropertyChanged(bool Value)
+    {
+        Properties.Settings.AutoCheckUpdate = Value;
     }
 
     private async void SaveSettings(object sender, RoutedEventArgs e)

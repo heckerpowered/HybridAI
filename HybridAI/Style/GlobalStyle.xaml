@@ -3,4 +3,11 @@
     <Style TargetType="Button">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
+
+    <Style TargetType="{x:Type TextElement}">
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+    </Style>
+    <Style TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+    </Style>
 </ResourceDictionary>

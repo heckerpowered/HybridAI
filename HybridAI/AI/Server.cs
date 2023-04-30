@@ -6,13 +6,15 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
+using HybridAI.Network;
+
 using Newtonsoft.Json;
 
 namespace HybridAI.AI
 {
     internal class Server
     {
-        internal static HttpClient Client { get; } = new();
+        internal static HttpClient Client { get; } = new(NetworkManager.HttpClientHandler);
 
         public static async Task RequestAIStream(MessageRequest request, DiscontinuousMessageReceiver discontinuousMessageReceiver, ExceptionHandler exceptionHandler, CancellationToken cancellationToken)
         {

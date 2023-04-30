@@ -11,7 +11,7 @@
                 <ResourceDictionary Source="Language/zh-cn.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
-                <ResourceDictionary Source="Style/NoFocusVisualStyle.xaml"/>
+                <ResourceDictionary Source="Style/GlobalStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

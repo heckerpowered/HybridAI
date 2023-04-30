@@ -7,13 +7,15 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
+using HybridAI.Network;
+
 using Newtonsoft.Json;
 
 namespace HybridAI.Update
 {
     internal class UpdateChecker
     {
-        private static readonly HttpClient UpdateServer = new()
+        private static readonly HttpClient UpdateServer = new(NetworkManager.HttpClientHandler)
         {
             BaseAddress = new("https://hybridai-1256953837.cos.ap-nanjing.myqcloud.com")
         };
